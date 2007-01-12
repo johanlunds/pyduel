@@ -38,11 +38,31 @@ class Game:
       self.players = [self.playerOne, self.playerTwo]
       
       self.tiles = []
-      for i in range(240):
+
+      #place the tiles, this should be (re)moved
+      for i in range(10):
             self.tiles.append(obj.Sprite("tile.bmp"))   
-            self.tiles[i].rect.top=300
+            self.tiles[i].rect.top=200
             self.tiles[i].rect.left=(i*20)
             self.objects.append(self.tiles[i])
+      for i in range(10):
+            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles[i+10].rect.top=300
+            self.tiles[i+10].rect.left=(i*20)+200
+            self.objects.append(self.tiles[i+10])
+      for i in range(10):
+            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles[i+20].rect.top=200-i*i
+            self.tiles[i+20].rect.left=(i*20)+400
+            self.objects.append(self.tiles[i+20])
+      for i in range(20):
+            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles[i+30].rect.top=400
+            self.tiles[i+30].rect.left=(i*20)+80
+            self.objects.append(self.tiles[i+30])
+      ###########################################
+
+
       #draw initial objects and background
       draw.erease(self.background.sprite, self.screen,[(0,0,640,480)])
       draw.draw(self.objects,self.background.sprite, self.screen, [(0,0,640,480)])
@@ -60,7 +80,7 @@ class Game:
          updateRects = []
          ereaseRects = []
          for p in self.players:
-            oldRect, newRect = logic.move(p, p.moveDir)
+            oldRect, newRect = logic.move(p, p.moveDir, self.tiles)
             ereaseRects.append(oldRect)
             updateRects.append(oldRect)
             updateRects.append(newRect)       
