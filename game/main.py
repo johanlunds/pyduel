@@ -36,9 +36,17 @@ class Game:
       
       self.objects = [self.playerOne.sprite, self.playerTwo.sprite]
       self.players = [self.playerOne, self.playerTwo]
+      
+      self.tiles = []
+      for i in range(240):
+            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles[i].rect.top=300
+            self.tiles[i].rect.left=(i*20)
+            self.objects.append(self.tiles[i])
       #draw initial objects and background
       draw.erease(self.background.sprite, self.screen,[(0,0,640,480)])
       draw.draw(self.objects,self.background.sprite, self.screen, [(0,0,640,480)])
+
    #the main loop, where the game runs until it ends ;o
    def mainLoop(self):
 
