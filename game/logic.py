@@ -1,26 +1,31 @@
 #/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import draw
 gravity = -0.05
 
 #this should move our Charactor and return the rectangle which needs to be update
 def move(obj, key):
-   movedRect = obj.sprite.rect
+   oldRect = obj.sprite.rect
+   #jump by setting 'yspeed' positive, and set 'jumpped' flag to true
    if key == 'JUMP':
-      if obj.jumped == False:
-         obj.yspeed = 3
-         obj.jumped = True
+      obj.yspeed = 3
+      obj.jumped = True
+   #move left or right
    if key == 'RIGHT':
       obj.sprite.rect.left = obj.sprite.rect.left + 1
    if key == 'LEFT':
       obj.sprite.rect.left = obj.sprite.rect.left - 1
 
+   #when we have a nive ground this should change
    if (obj.sprite.rect.bottom > 300):
       obj.yspeed=0.5
-      obj.jumped=False  
+      obj.jumped=False
+   
+   #fall!  
    obj.yspeed = obj.yspeed + gravity
    obj.sprite.rect.top = obj.sprite.rect.top - obj.yspeed
-   movedRect = movedRect.union(obj.sprite.rect)
-   return(movedRect) 
+   
+   newRect = obj.sprite.rect
+   return(oldRect, newRect) 
 
 

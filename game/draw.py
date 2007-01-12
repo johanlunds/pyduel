@@ -5,10 +5,16 @@ import os, sys
 import pygame
 from pygame.locals import *
 
-#this function should draw blit and and update the part of the screen that needs to be.
-def draw(objects, background, screen, rect):
+#blit background in ereaseRects
+def erease(background, screen, ereaseRects):
+   for rect in ereaseRects:
+      screen.blit(background, rect, rect)
+      
 
-   screen.blit(background, (0, 0))
+#blit objects and update the the areas which need to be
+def draw(objects, background, screen, draw):
    for o in objects:
+      screen.blit(background, o.rect, o.rect)
       o.rendered.draw(screen)
-   pygame.display.update(rect)
+   pygame.display.update(draw)
+   #pygame.display.flip()

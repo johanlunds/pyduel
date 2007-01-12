@@ -12,6 +12,7 @@ import logic   #handle moving, collision detecting etc.
 import draw    #handle drawing
 import obj     #contain the objects
 
+#the player class, duh
 class Player:
    def __init__(self, image, keys):
       self.sprite = obj.Sprite(image)
@@ -26,6 +27,7 @@ class Game:
       #initialize screen
       self.screen = pygame.display.set_mode((640, 480))
       pygame.display.set_caption('PyDuel')
+      self.clock = pygame.time.Clock()
       
       #create objects
       self.playerOne = Player("red.bmp", [K_a,K_d,K_w])
@@ -33,23 +35,30 @@ class Game:
       self.background = obj.Background()
       
       self.objects = [self.playerOne.sprite, self.playerTwo.sprite]
+      self.players = [self.playerOne, self.playerTwo]
       #draw initial objects and background
-      draw.draw(self.objects,self.background.sprite, self.screen,(0,0,640,480))
-
+      draw.erease(self.background.sprite, self.screen,[(0,0,640,480)])
+      draw.draw(self.objects,self.background.sprite, self.screen, [(0,0,640,480)])
    #the main loop, where the game runs until it ends ;o
    def mainLoop(self):
+
       while(1):
+         #0 cap the fps
+         self.clock.tick(100)
          #1 check for input
          self.playerTwo.moveDir = self.playerTwo.inp.getKbdInput(self.playerTwo.jumped)
          self.playerOne.moveDir = self.playerOne.inp.getKbdInput(self.playerOne.jumped)
          #2 do the logic
-         rect1 = logic.move(self.playerOne, self.playerOne.moveDir)
-         rect2 = logic.move(self.playerTwo, self.playerTwo.moveDir)
-                  
-         #updateRect = rect1.union(rect2)
-         updateRect = 0,0,640,480
+         updateRects = []
+         ereaseRects = []
+         for p in self.players:
+            oldRect, newRect = logic.move(p, p.moveDir)
+            ereaseRects.append(oldRect)
+            updateRects.append(oldRect)
+            updateRects.append(newRect)       
          #3 draw
-         draw.draw(self.objects,self.background.sprite, self.screen,updateRect)
+         draw.erease(self.background.sprite, self.screen, ereaseRects)
+         draw.draw(self.objects, self.background.sprite, self.screen, updateRects)
    
 if __name__ == "__main__":
    # Change working directory so that the paths work correctly

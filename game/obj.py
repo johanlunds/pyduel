@@ -10,7 +10,7 @@ import loadresources
 class Sprite(pygame.sprite.Sprite):
    def __init__(self, imageFile):
       pygame.sprite.Sprite.__init__(self) 
-      self.image, self.rect = loadresources.load_image(imageFile,-1)
+      self.image, self.rect = loadresources.load_image(imageFile,(255,0,255))
       self.rendered = pygame.sprite.RenderPlain(self)
 
 
