@@ -30,8 +30,8 @@ class Game:
       self.clock = pygame.time.Clock()
       
       #create objects
-      self.playerOne = Player("red.bmp", [K_a,K_d,K_w])
-      self.playerTwo = Player("blue.bmp", [K_LEFT,K_RIGHT,K_UP])
+      self.playerOne = Player("red.png", [K_a,K_d,K_w])
+      self.playerTwo = Player("blue.png", [K_LEFT,K_RIGHT,K_UP])
       self.background = obj.Background()
       
       self.objects = [self.playerOne.sprite, self.playerTwo.sprite]
@@ -41,22 +41,22 @@ class Game:
 
       #place the tiles, this should be (re)moved
       for i in range(10):
-            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles.append(obj.Sprite("tile.png"))   
             self.tiles[i].rect.top=200
             self.tiles[i].rect.left=(i*20)
             self.objects.append(self.tiles[i])
       for i in range(10):
-            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles.append(obj.Sprite("tile.png"))   
             self.tiles[i+10].rect.top=300
             self.tiles[i+10].rect.left=(i*20)+200
             self.objects.append(self.tiles[i+10])
       for i in range(10):
-            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles.append(obj.Sprite("tile.png"))   
             self.tiles[i+20].rect.top=200-i*i
             self.tiles[i+20].rect.left=(i*20)+400
             self.objects.append(self.tiles[i+20])
       for i in range(20):
-            self.tiles.append(obj.Sprite("tile.bmp"))   
+            self.tiles.append(obj.Sprite("tile.png"))   
             self.tiles[i+30].rect.top=400
             self.tiles[i+30].rect.left=(i*20)+80
             self.objects.append(self.tiles[i+30])
