@@ -26,13 +26,25 @@ def move(player, key, tiles):
    
    #print player.yspeed
    for tile in tiles:
+      #if we are inside a tile and going down
+      if collisionCheck(player.sprite.rect, tile.rect): 
+         if player.sprite.rect.top < tile.rect.top: 
+            penetration = player.sprite.rect.bottom - tile.rect.top 
+            player.sprite.rect.top = player.sprite.rect.top - penetration
+            player.yspeed = 0
+            player.jumped=False
+            #print "stay!"
+         else: 
+            #player.sprite.rect.top = tile.rect.bottom
+            player.yspeed = 1
+            
+
+      """if we are inside a tile and going upwards
       if collisionCheck(player.sprite.rect,tile.rect) and player.yspeed < 0:
-         player.yspeed=0
+         player.yspeed=0.5
          player.jumped=True
-      elif collisionCheck(player.sprite.rect,tile.rect) and player.yspeed > 0:
-         player.yspeed=0
-         player.jumped=False
-   
+         print "fall!"""
+         
 
    
    #set newRect to the new position of the object, then return both the new and the old positions
