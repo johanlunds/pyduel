@@ -18,7 +18,7 @@ class Player:
       self.sprite = obj.Sprite(image)
       self.inp = io.Input(keys)
       self.moveDir = None
-      self.yspeed = 0
+      self.speed = self.xspeed,self.yspeed = 1,0
       self.jumped = True
 
 #The main class
