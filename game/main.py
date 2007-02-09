@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os, sys
-from engine, level, player, variables import *
+from engine import Engine, Scene
+from level import Level
+from player import Player
+from variables import *
 
 import pygame
 from pygame.locals import *
