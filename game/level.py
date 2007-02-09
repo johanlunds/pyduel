@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from variables import *
 
 import pygame
 from pygame.locals import *
@@ -12,10 +13,10 @@ class Level(object):
    def __init__(self):
       self.tiles = pygame.sprite.Group()
    
-   def paint(self):
+   def draw(self):
       #place the tiles, this should be (re)moved
       for i in range(50):
-         tile = pygame.image.load(os.path.join(DIR_GRAPH, "tile.png")).convert_alpha()
+         tile = Tile(pygame.image.load(os.path.join(DIR_GRAPH, "tile.png")).convert_alpha())
          if i < 10:
             tile.rect.top = 190+i
             tile.rect.left = 20*i
@@ -29,3 +30,10 @@ class Level(object):
             tile.rect.top = 400
             tile.rect.left = (20*i)+120
          self.tiles.add(tile)
+
+class Tile(pygame.sprite.Sprite):
+   
+   def __init__(self, image):
+      pygame.sprite.Sprite.__init__(self)
+      
+      self.image, self.rect = image, image.get_rect()

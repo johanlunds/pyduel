@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os, sys
-from engine import Engine, Scene
+from engine import Game, Scene
 from level import Level
 from player import Player
 from variables import *
@@ -13,11 +13,11 @@ from pygame.locals import *
 class Duel(Scene):
    """The main game scene. Where the players fight against eachother."""
    
-   def __init__(self, game)
+   def __init__(self, game):
       Scene.__init__(self, game)
       
-      playerOne = Player(os.path.join(DIR_GRAPH, "red.png"), (K_a, K_d, K_w))
-      playerTwo = Player(os.path.join(DIR_GRAPH, "blue.png"), (K_LEFT, K_RIGHT, K_UP))
+      playerOne = Player(pygame.image.load(os.path.join(DIR_GRAPH, "red.png")).convert_alpha(), (K_a, K_d, K_w))
+      playerTwo = Player(pygame.image.load(os.path.join(DIR_GRAPH, "blue.png")).convert_alpha(), (K_LEFT, K_RIGHT, K_UP))
       
       self.players = pygame.sprite.Group(playerOne, playerTwo)
       self.currentLevel = Level() # Temporary
@@ -31,12 +31,12 @@ class Duel(Scene):
       self.players.update()
    
    def update(self):
-      self.players.clear(self.screen, self.background)
-      self.players.draw(self.screen)
+      self.players.clear(self.game.screen, self.background)
+      self.players.draw(self.game.screen)
    
    def draw(self):
       self.currentLevel.draw()
-      self.players.draw(self.screen)
+      self.players.draw(self.game.screen)
 
 if __name__ == "__main__":
    # Change working directory so that the paths work correctly
