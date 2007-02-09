@@ -21,21 +21,22 @@ class Duel(Scene):
       
       self.players = pygame.sprite.Group(playerOne, playerTwo)
       self.currentLevel = Level() # Temporary
-   
+      
    def event(self, event):
       if event.type == KEYDOWN:
          for player in self.players:
             player.move(event.key)
-   
+
    def loop(self):
       self.players.update()
+
    
    def update(self):
       self.players.clear(self.game.screen, self.background)
       self.players.draw(self.game.screen)
    
    def draw(self):
-      self.currentLevel.draw()
+      self.currentLevel.draw(self.game.screen)
       self.players.draw(self.game.screen)
 
 if __name__ == "__main__":

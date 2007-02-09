@@ -13,7 +13,7 @@ class Level(object):
    def __init__(self):
       self.tiles = pygame.sprite.Group()
    
-   def draw(self):
+   def draw(self, screen):
       #place the tiles, this should be (re)moved
       for i in range(50):
          tile = Tile(pygame.image.load(os.path.join(DIR_GRAPH, "tile.png")).convert_alpha())
@@ -30,6 +30,7 @@ class Level(object):
             tile.rect.top = 400
             tile.rect.left = (20*i)+120
          self.tiles.add(tile)
+      self.tiles.draw(screen);
 
 class Tile(pygame.sprite.Sprite):
    
