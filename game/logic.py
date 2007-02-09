@@ -1,7 +1,10 @@
 #/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Note: FILE IS GONNA BE REMOVED SOON
+
 import copy
-gravity = 0.05
+
 UP = 0
 RIGHT = 1
 DOWN = 2
@@ -24,7 +27,7 @@ def move(player, key, tiles):
       player.sprite.rect.left = player.sprite.rect.left - player.xspeed
    
    #fall!  
-   player.yspeed = player.yspeed + gravity
+   player.yspeed = player.yspeed + GRAVITY
    player.sprite.rect.top = player.sprite.rect.top + player.yspeed
 
    #check for collision with the tiles
