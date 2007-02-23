@@ -12,7 +12,12 @@ DIR_SOUND = os.path.join("data", "sound")
 DIR_MUSIC = os.path.join("data", "music")
 DIR_FONT = os.path.join("data", "font")
 
+UP,RIGHT,DOWN,LEFT = 0,1,2,3
+INAIR,STANDING = 0,1
+
 # Used in game initiation. May be removed later
 CAPTION = "PyDuel"
 RESOLUTION = (640, 480)
 ICON = None # No icon right now
+
+

@@ -19,25 +19,30 @@ class Duel(Scene):
       playerOne = Player(pygame.image.load(os.path.join(DIR_GRAPH, "red.png")).convert_alpha(), (K_a, K_d, K_w))
       playerTwo = Player(pygame.image.load(os.path.join(DIR_GRAPH, "blue.png")).convert_alpha(), (K_LEFT, K_RIGHT, K_UP))
       
-      self.players = pygame.sprite.Group(playerOne, playerTwo)
+      self.players = pygame.sprite.Group(playerTwo, playerOne)
       self.currentLevel = Level() # Temporary
       
    def event(self, event):
-      if event.type == KEYDOWN:
-         for player in self.players:
-            player.move(event.key)
+      pass
 
    def loop(self):
+      pygame.event.pump()
+      keyInput = pygame.key.get_pressed()
+      for player in self.players:
+         player.move(keyInput)
+         player.fall()
+         player.stand(self.currentLevel.tiles)
       self.players.update()
 
    
    def update(self):
       self.players.clear(self.game.screen, self.background)
       self.players.draw(self.game.screen)
-   
+        
    def draw(self):
       self.currentLevel.draw(self.game.screen)
       self.players.draw(self.game.screen)
+      
 
 if __name__ == "__main__":
    # Change working directory so that the paths work correctly

@@ -22,13 +22,13 @@ class Level(object):
             tile.rect.left = 20*i
          elif i < 20:
             tile.rect.top = 300
-            tile.rect.left = (20*i)+220
+            tile.rect.left = (20*i)
          elif i < 30:
             tile.rect.top = 200-i
-            tile.rect.left = (20*i)+450
+            tile.rect.left = (20*i)
          else:
             tile.rect.top = 400
-            tile.rect.left = (20*i)+120
+            tile.rect.left = (20*i)-500
          self.tiles.add(tile)
       self.tiles.draw(screen);
 
