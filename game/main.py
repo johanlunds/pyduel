@@ -20,7 +20,7 @@ class Duel(Scene):
       playerTwo = Player(pygame.image.load(os.path.join(DIR_GRAPH, "blue.png")).convert_alpha(), (K_LEFT, K_RIGHT, K_UP))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
-      self.currentLevel = Level() # Temporary
+      self.currentLevel = Level(LEVEL_ONE)
       
    def event(self, event):
       pass
@@ -31,7 +31,7 @@ class Duel(Scene):
       for player in self.players:
          player.move(keyInput)
          player.fall()
-         player.stand(self.currentLevel.tiles)
+         player.stand(self.currentLevel.levelArray)
       self.players.update()
 
    

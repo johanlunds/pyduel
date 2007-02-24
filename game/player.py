@@ -22,8 +22,8 @@ class Player(pygame.sprite.Sprite):
    def move(self, keyInput):
       #if self.keys not in keyInput: return
       #oldRect = pygame.Rect(self.rect)
-      if keyInput[self.keyUp] :
-         self.ySpeed = 3
+      if keyInput[self.keyUp] and self.state is STANDING:
+         self.ySpeed = 4
          self.state = INAIR
       if keyInput[self.keyLeft]:
          self.rect.move_ip(-self.xSpeed, 0)
@@ -34,28 +34,31 @@ class Player(pygame.sprite.Sprite):
       self.ySpeed -= GRAVITY     
       self.rect.move_ip(0, -self.ySpeed) # Because of ySpeed up being positive
       
-   
-   def stand(self, tiles):
-      if (pygame.sprite.spritecollideany(self, tiles)):
-         for tile in tiles:
-            smallestPenetrationDir, smallestPenetration = getPenetration(self.rect, tile.rect)
-            #if the player is penetration from above, set yspeed to zero, and become jumpable again
-
-            if smallestPenetrationDir == UP:
-               self.rect.move_ip(0, -smallestPenetration)
-               self.ySpeed = 0
-               self.state = STANDING
-            #if the penetration is from side or below, we should move out from the tile and continue falling
-            elif smallestPenetrationDir == RIGHT:
-               self.rect.move_ip(smallestPenetration, 0)
-            elif smallestPenetrationDir == DOWN:
-               self.rect.move_ip(0, smallestPenetration)
-            elif smallestPenetrationDir == LEFT:
-               self.rect.move_ip(-smallestPenetration, 0)   
-            
-         
       
-      # http://www.pygame.org/docs/ref/sprite.html groupcollide() etc...
+   def stand(self, levelArray):
+      """checks for collisions with tiles and alters speed, position and state of the player"""   
+      for i in range(RES_HEIGHT/TILE_HEIGHT):
+         for j in range(RES_WIDTH/TILE_WIDTH):
+            if levelArray[i][j] is 1:
+               tileRect = pygame.Rect(j*TILE_WIDTH, i*TILE_HEIGHT, TILE_HEIGHT, TILE_WIDTH)
+               if self.rect.colliderect(tileRect):
+                  smallestPenetrationDir, smallestPenetration = getPenetration(self.rect, tileRect)
+                  #if the player is penetration from above, set yspeed to zero, and become jumpable again
+                  if smallestPenetrationDir == UP:
+                     self.rect.move_ip(0, -smallestPenetration)
+                     self.ySpeed = 0
+                     self.state = STANDING
+                  #if the penetration is from side or below, we should move out from the tile and continue falling
+                  elif smallestPenetrationDir == RIGHT:
+                     self.rect.move_ip(smallestPenetration, 0)
+                  elif smallestPenetrationDir == DOWN:
+                     self.rect.move_ip(0, smallestPenetration)
+                     self.ySpeed = 0 #so that we "bounce" back
+                  elif smallestPenetrationDir == LEFT:
+                     self.rect.move_ip(-smallestPenetration, 0)   
+            
+
+
 
 #return the smallest direction and ammount of penetration that rectOne does in rectTwo
 def getPenetration(rectOne, rectTwo):

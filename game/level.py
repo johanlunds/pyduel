@@ -10,27 +10,19 @@ from pygame.locals import *
 class Level(object):
    """Level class for levels in the game. Real levels should inherit from this one."""
 
-   def __init__(self):
+   def __init__(self, array):
       self.tiles = pygame.sprite.Group()
-   
+      self.levelArray = array
+
    def draw(self, screen):
-      #place the tiles, this should be (re)moved
-      for i in range(50):
-         tile = Tile(pygame.image.load(os.path.join(DIR_GRAPH, "tile.png")).convert_alpha())
-         if i < 10:
-            tile.rect.top = 190+i
-            tile.rect.left = 20*i
-         elif i < 20:
-            tile.rect.top = 300
-            tile.rect.left = (20*i)
-         elif i < 30:
-            tile.rect.top = 200-i
-            tile.rect.left = (20*i)
-         else:
-            tile.rect.top = 400
-            tile.rect.left = (20*i)-500
-         self.tiles.add(tile)
-      self.tiles.draw(screen);
+      for i in range(RES_HEIGHT/TILE_HEIGHT):
+         for j in range(RES_WIDTH/TILE_WIDTH):
+            if self.levelArray[i][j] is 1:
+               tile = Tile(pygame.image.load(os.path.join(DIR_GRAPH, "tile.png")).convert_alpha())
+               tile.rect.top = i*TILE_HEIGHT
+               tile.rect.left = j*TILE_WIDTH
+               self.tiles.add(tile)
+      self.tiles.draw(screen)
 
 class Tile(pygame.sprite.Sprite):
    
@@ -38,3 +30,5 @@ class Tile(pygame.sprite.Sprite):
       pygame.sprite.Sprite.__init__(self)
       
       self.image, self.rect = image, image.get_rect()
+
+
