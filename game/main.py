@@ -29,9 +29,9 @@ class Duel(Scene):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
       for player in self.players:
-         player.move(keyInput)
+         player.move(keyInput, self.currentLevel.levelArray)
          player.fall()
-         player.stand(self.currentLevel.levelArray)
+         player.checkPosition(self.currentLevel.levelArray)
       self.players.update()
 
    
