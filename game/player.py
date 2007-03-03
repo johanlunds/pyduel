@@ -8,20 +8,21 @@ from pygame.locals import *
 
 class Player(pygame.sprite.Sprite):
 
+   JUMPSPEED = 3.5
+
    def __init__(self, image, keys):
-      pygame.sprite.Sprite.__init__(self)      
+      pygame.sprite.Sprite.__init__(self)
+      
       self.image, self.rect = image, image.get_rect()
       self.keyLeft, self.keyRight, self.keyUp = self.keys = keys
       self.xSpeed, self.ySpeed = (1, 0) # xSpeed right = positive; ySpeed up = positive
-      self.jumpSpeed = 3.5
+      
    def update(self):
       pass
       
-   def move(self, keyInput, levelArray):
-      #if self.keys not in keyInput: return
-      #oldRect = pygame.Rect(self.rect)
-      if keyInput[self.keyUp] and self.onTile(levelArray):
-         self.ySpeed = self.jumpSpeed
+   def move(self, keyInput, level):
+      if keyInput[self.keyUp] and self.onTile(level):
+         self.ySpeed = Player.JUMPSPEED
       if keyInput[self.keyLeft]:
          self.rect.move_ip(-self.xSpeed, 0)
       if keyInput[self.keyRight]:
@@ -31,60 +32,47 @@ class Player(pygame.sprite.Sprite):
       self.ySpeed -= GRAVITY     
       self.rect.move_ip(0, -self.ySpeed) # Because of ySpeed up being positive
       
-      
-   def checkPosition(self, levelArray):
-      """Checks if the player is at the edges of the screen or inside a tile 
-      and does apropriate things"""
+   def checkPosition(self, level):
+      """Checks if the player is at the edges of the screen or inside a tile and does apropriate things."""
       self.checkOuterBounds()   
-      for i in range(RES_HEIGHT/TILE_HEIGHT):
-         for j in range(RES_WIDTH/TILE_WIDTH):
-            if levelArray[i][j] is 1:
-               tileRect = pygame.Rect(j*TILE_WIDTH, i*TILE_HEIGHT, TILE_HEIGHT, TILE_WIDTH)
-               if self.rect.colliderect(tileRect):
-                  self.correctPosition(tileRect)
-
+      for tile in level.tiles.sprites():
+         if not tile.isNone and self.rect.colliderect(tile.rect):
+            self.correctPosition(tile)
 
    def checkOuterBounds(self):
-      if self.rect.x < 0:
-         self.rect.x = 0
-      if self.rect.y < 0:
-         self.rect.y = 0
+      if self.rect.left < 0:
+         self.rect.left = 0
+      if self.rect.top < 0:
+         self.rect.top = 0
          self.ySpeed = -GRAVITY
       if self.rect.right > RES_WIDTH:
          self.rect.right = RES_WIDTH
       if self.rect.top > RES_HEIGHT:
-         print "you fell down, i'll help you up again"
-         self.rect.top = 0
+         self.rect.top = 0 # Move to top of screen if falled all the way down
  
-   def correctPosition(self, tileRect):
-      
+   def correctPosition(self, tile):
       """Correct the position of the player by moving the tile
       acording the penetration of player rect in the tileRect """
-      smallestPenetrationDir, smallestPenetration = self.getPenetration(tileRect)
+      smallestPenetrationDir, smallestPenetration = self.getPenetration(tile.rect)
       if smallestPenetrationDir == UP:
          self.rect.move_ip(0, -smallestPenetration)
-         self.ySpeed = 0 #so that we stop there and dont fall through the tile
+         self.ySpeed = 0 # so that we stop there and dont fall through the tile
       elif smallestPenetrationDir == RIGHT:
          self.rect.move_ip(smallestPenetration, 0)
-         #player.ySpeed = -GRAVITY #not sure if we should have this here or not
       elif smallestPenetrationDir == DOWN:
          self.rect.move_ip(0, smallestPenetration)
-         self.ySpeed = -GRAVITY #so that we "bounce" down again
+         self.ySpeed = -GRAVITY # so that we "bounce" down again
       elif smallestPenetrationDir == LEFT:
          self.rect.move_ip(-smallestPenetration, 0)
-         #player.ySpeed = -GRAVITY #not sure if we should have this here or not
-      
-   def onTile(self, levelArray):
-      """Checks if the either player.centerx -5 or +5 (so that we get true when halfways outside) 
-      and player.rect.y + height + 1 (so that we get true while standing on top of a tile)
-      are inside of a tile, else it returns false"""
-      for i in range(RES_HEIGHT/TILE_HEIGHT):
-         for j in range(RES_WIDTH/TILE_WIDTH):
-            if levelArray[i][j] is 1:
-               tileRect = pygame.Rect(j*TILE_WIDTH, i*TILE_HEIGHT, TILE_HEIGHT, TILE_WIDTH)         
-               if tileRect.collidepoint((self.rect.centerx + 5), (self.rect.y + self.rect.height + 1)) \
-               or tileRect.collidepoint((self.rect.centerx - 5), (self.rect.y + self.rect.height + 1)):
-                  return True
+
+   def onTile(self, level):
+      """Checks if player is standing on a tile."""
+      for tile in level.tiles.sprites():
+         if not tile.isNone:
+            # Return true when +/- 5 px from centerx (halfways outside)
+            if tile.rect.collidepoint(self.rect.centerx+5, self.rect.bottom+1) \
+            or tile.rect.collidepoint(self.rect.centerx-5, self.rect.bottom+1):
+               return True
       return False
 
    def getPenetration(self, rectTwo):

@@ -62,7 +62,7 @@ class Scene(object):
       while 1:
          self.game.tick()
          for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                raise SystemExit, 0
             try:
                self.event(event)

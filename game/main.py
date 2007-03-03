@@ -3,7 +3,7 @@
 
 import os, sys
 from engine import Game, Scene
-from level import Level
+from level import LevelLoader
 from player import Player
 from variables import *
 
@@ -16,11 +16,11 @@ class Duel(Scene):
    def __init__(self, game):
       Scene.__init__(self, game)
       
-      playerOne = Player(pygame.image.load(os.path.join(DIR_GRAPH, "red.png")).convert_alpha(), (K_a, K_d, K_w))
-      playerTwo = Player(pygame.image.load(os.path.join(DIR_GRAPH, "blue.png")).convert_alpha(), (K_LEFT, K_RIGHT, K_UP))
+      playerOne = Player(loadImgPng("red.png"), (K_a, K_d, K_w))
+      playerTwo = Player(loadImgPng("blue.png"), (K_LEFT, K_RIGHT, K_UP))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
-      self.currentLevel = Level(LEVEL_ONE)
+      self.currentLevel = LevelLoader().load(os.path.join(DIR_LEVELS, "1.xml"))
       
    def event(self, event):
       pass
@@ -29,11 +29,10 @@ class Duel(Scene):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
       for player in self.players:
-         player.move(keyInput, self.currentLevel.levelArray)
+         player.move(keyInput, self.currentLevel)
          player.fall()
-         player.checkPosition(self.currentLevel.levelArray)
+         player.checkPosition(self.currentLevel)
       self.players.update()
-
    
    def update(self):
       self.players.clear(self.game.screen, self.background)
@@ -42,9 +41,8 @@ class Duel(Scene):
    def draw(self):
       self.currentLevel.draw(self.game.screen)
       self.players.draw(self.game.screen)
-      
 
-if __name__ == "__main__":
+def main():
    # Change working directory so that the paths work correctly
    os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
    
@@ -52,3 +50,6 @@ if __name__ == "__main__":
    firstScene = Duel(pyduel)
    pyduel.start(firstScene) # Start the game with a new Duel scene
    raise SystemExit, 0
+
+if __name__ == "__main__":
+   main()
