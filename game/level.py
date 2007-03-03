@@ -31,8 +31,8 @@ class LevelLoader(xml.sax.handler.ContentHandler):
       if name == "row": # a new row
          self.row += 1
          self.col = 0
-      if name == "tile": # a tile
-         tile = Tile(int(attributes["id"]), self.col, self.row)
+      if name == "cell": # a tile
+         tile = Tile(int(attributes["type"]), self.col, self.row)
          self.level.add(tile)
          self.col += 1
 
