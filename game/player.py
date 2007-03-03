@@ -35,8 +35,8 @@ class Player(pygame.sprite.Sprite):
    def checkPosition(self, level):
       """Checks if the player is at the edges of the screen or inside a tile and does apropriate things."""
       self.checkOuterBounds()   
-      for tile in level.tiles.sprites():
-         if not tile.isNone and self.rect.colliderect(tile.rect):
+      for tile in level.tiles:
+         if not tile.isWalkable and self.rect.colliderect(tile.rect):
             self.correctPosition(tile)
 
    def checkOuterBounds(self):
@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
          self.rect.left = 0
       if self.rect.top < 0:
          self.rect.top = 0
-         self.ySpeed = -GRAVITY
+         self.ySpeed = 0
       if self.rect.right > RES_WIDTH:
          self.rect.right = RES_WIDTH
       if self.rect.top > RES_HEIGHT:
@@ -61,14 +61,14 @@ class Player(pygame.sprite.Sprite):
          self.rect.move_ip(smallestPenetration, 0)
       elif smallestPenetrationDir == DOWN:
          self.rect.move_ip(0, smallestPenetration)
-         self.ySpeed = -GRAVITY # so that we "bounce" down again
+         self.ySpeed = 0 # so that we "bounce" down again
       elif smallestPenetrationDir == LEFT:
          self.rect.move_ip(-smallestPenetration, 0)
 
    def onTile(self, level):
       """Checks if player is standing on a tile."""
-      for tile in level.tiles.sprites():
-         if not tile.isNone:
+      for tile in level.tiles:
+         if not tile.isWalkable:
             # Return true when +/- 5 px from centerx (halfways outside)
             if tile.rect.collidepoint(self.rect.centerx+5, self.rect.bottom+1) \
             or tile.rect.collidepoint(self.rect.centerx-5, self.rect.bottom+1):

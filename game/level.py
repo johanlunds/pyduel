@@ -54,8 +54,12 @@ class Level(object):
       self.tiles = pygame.sprite.Group()
       # self.currentLevel = 1 # number of currentLevel. Not used right now
    
-   def get(self, col, row):
-      """Returns tile at specified column and row position in map."""
+   def get(self, col, row, isPixels=False):
+      """Returns tile at specified column and row (or x and y px) position in map."""
+      if isPixels:
+         col = int(col/Tile.WIDTH)
+         row = int(row/Tile.HEIGHT)
+      
       for tile in self.tiles.sprites():
          if tile.col == col and tile.row == row:
             return tile
@@ -70,7 +74,7 @@ class Level(object):
 class Tile(pygame.sprite.Sprite):
 
    WIDTH, HEIGHT = (20, 20) # Width and height of tiles
-   
+
    # Available tiles.
    tiles = (None, "tile-ground-middle.png",  "tile-ground-left.png", "tile-ground-right.png", "tile-ground-bottom.png")  
    #forgroundTiles = ("tile-tree-bottom.png", "tile-tree-top.png", "tile-bush.png",  ) 
@@ -81,10 +85,10 @@ class Tile(pygame.sprite.Sprite):
       if Tile.tiles[number] is not None: # Check so we don't try to load empty image
          image = loadImgPng(Tile.tiles[number])
          self.image = image
-         self.isNone = False
+         self.isWalkable = False
       else:
          self.image = pygame.Surface((Tile.WIDTH, Tile.HEIGHT))
-         self.isNone = True
+         self.isWalkable = True
       
       self.newPos(col, row)
    
