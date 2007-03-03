@@ -71,7 +71,9 @@ class Tile(pygame.sprite.Sprite):
 
    WIDTH, HEIGHT = (20, 20) # Width and height of tiles
    
-   tiles = (None, "tile.png") # Available tiles.
+   # Available tiles.
+   tiles = (None, "tile-ground-middle.png",  "tile-ground-left.png", "tile-ground-right.png", "tile-ground-bottom.png")  
+   #forgroundTiles = ("tile-tree-bottom.png", "tile-tree-top.png", "tile-bush.png",  ) 
    
    def __init__(self, number, col, row):
       pygame.sprite.Sprite.__init__(self)
