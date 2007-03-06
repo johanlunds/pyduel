@@ -20,22 +20,28 @@ class Duel(Scene):
       playerTwo = Player(loadImgPng("blue.png"), (K_LEFT, K_RIGHT, K_UP, K_DOWN))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
-      self.currentLevel = LevelLoader().load(os.path.join(DIR_LEVELS, "1.xml"))
-      
+      self.levelLoader = LevelLoader()
+      self.loadLevel(1) # First level
+   
+   def loadLevel(self, levelNumber):
+      self.levelNumber = levelNumber
+      index = self.levelNumber-1 # index in list is minus one
+      self.level = self.levelLoader.load(self.levelLoader.__class__.levels[index]) # use level list from level loader's class
+   
    def event(self, event):
       pass
 
    def loop(self):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
-      self.players.update(keyInput, self.currentLevel)
+      self.players.update(keyInput, self.level)
    
    def update(self):
       self.players.clear(self.game.screen, self.background)
       self.players.draw(self.game.screen)
         
    def draw(self):
-      self.currentLevel.draw(self.game.screen)
+      self.level.draw(self.game.screen)
       self.players.draw(self.game.screen)
 
 def main():

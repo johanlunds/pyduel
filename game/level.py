@@ -11,6 +11,10 @@ from pygame.locals import *
 class LevelLoader(xml.sax.handler.ContentHandler):
    """For loading levels from XML-files. More info: http://docs.python.org/lib/module-xml.sax.handler.html"""
 
+   # List all available levels with absolute paths
+   # The list is sorted, so just use next item in list to load next level
+   levels = filter(os.path.isfile, [os.path.join(DIR_LEVELS, entry) for entry in os.listdir(DIR_LEVELS)])
+
    def __init__(self):
       self.level = None # set in self.load()
       self.col = 0
@@ -49,11 +53,8 @@ class LevelLoader(xml.sax.handler.ContentHandler):
 class Level(object):
    """Level class for levels in the game."""
 
-   maxLevels = 1 # scan dir after *.map or some like that. To do!
-
    def __init__(self):
       self.tiles = pygame.sprite.Group()
-      # self.currentLevel = 1 # number of currentLevel. Not used right now
    
    def get(self, cords, isPixels=False):
       """Returns tile at specified column and row (or x and y px) position in map."""
