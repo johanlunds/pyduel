@@ -67,7 +67,9 @@ class Level(object):
       for tile in self.tiles:
          if tile.col == col and tile.row == row:
             return tile
-            
+      
+      # If there's no tile at the coordinates (outside of screen for example)
+      # then return dummy-tile (prevents errors)
       return Tile(0, cords)
    
    def add(self, tile):

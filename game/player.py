@@ -71,12 +71,13 @@ class Player(pygame.sprite.Sprite):
       # If speed is too high we might miss tiles (and begin moving through walls)
       if self.ySpeed > Tile.HEIGHT: self.ySpeed = Tile.HEIGHT # speed is bigger than tile's height
       
-      if self.ySpeed != 0: # Speed is not zero, so move player
-         self.move(0, self.ySpeed, level)
-         if self.ySpeed > 0: # we're going up
-            self.fixPosition(UP, level)
-         elif self.ySpeed < 0: # we're going down
-            self.fixPosition(DOWN, level)
+      self.move(0, self.ySpeed, level)
+      if self.ySpeed > 0: # we're going up
+         fixedPos = self.fixPosition(UP, level)
+         if fixedPos: self.ySpeed = 0 # we've hit a tile above us. Fall down again.
+      elif self.ySpeed < 0: # we're going down
+         fixedPos = self.fixPosition(DOWN, level)
+         if fixedPos: self.state = Player.STANDING # We've fallen down to solid ground
    
    def fall(self, level):
       """Check if we have stepped out into air."""
@@ -88,7 +89,7 @@ class Player(pygame.sprite.Sprite):
             self.state = Player.JUMPED # Force state to be jumped
          
    def fixPosition(self, dir, level):
-      """Check (and fix) position of player at chosen direction.
+      """Check position of player at chosen direction and fix if we've hit something.
       
       Returns true if position is changed ("fixed").
       """
@@ -97,13 +98,11 @@ class Player(pygame.sprite.Sprite):
       # we move player as far as we can (to the tile's side).
       if dir == UP:
          if not self.tileTopLeft.walkable or not self.tileTopRight.walkable:
-            self.ySpeed = 0
             self.rect = self.oldRect
             self.rect.top = level.get((self.rect.centerx, self.rect.top), True).rect.top         
             return True
       elif dir == DOWN:
          if not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable:
-            self.state = Player.STANDING # We've fallen down to solid ground
             self.rect = self.oldRect
             self.rect.bottom = level.get((self.rect.centerx, self.rect.bottom), True).rect.bottom-1 # Minus one (important!), because of how rects works
             return True
