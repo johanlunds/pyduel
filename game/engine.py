@@ -9,7 +9,7 @@ from pygame.locals import *
 class Game(object):
    """Not very useful except from initializing a Pygame window and the game."""
    
-   FRAMERATE = 100
+   FRAMERATE = 75
    
    def __init__(self, resolution, caption=None, icon=None):
       pygame.init()

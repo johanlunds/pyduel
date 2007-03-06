@@ -8,7 +8,7 @@ from pygame.locals import *
 
 """Define variables and constants used all over in the game."""
 
-GRAVITY = 0.05 # Move to level files?
+GRAVITY = 0.25 # Move to level files?
 
 DIR_GRAPH = os.path.join("data", "graphic")
 DIR_SOUND = os.path.join("data", "sound")
@@ -24,4 +24,4 @@ CAPTION = "PyDuel"
 RESOLUTION = RES_WIDTH, RES_HEIGHT = (640, 480)
 ICON = None # No icon right now
 
-UP, RIGHT, DOWN, LEFT = range(4)
+UP, RIGHT, DOWN, LEFT = range(4) # Directions

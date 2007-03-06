@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from level import Tile
 from variables import *
 
 import pygame
@@ -8,100 +9,113 @@ from pygame.locals import *
 
 class Player(pygame.sprite.Sprite):
 
-   JUMPSPEED = 3.5
+   JUMPSPEED = 8 # Speed at start of jump
+   SPEED = 2 # Walking speed
+   JUMPED, STANDING = range(2) # States of player
 
    def __init__(self, image, keys):
       pygame.sprite.Sprite.__init__(self)
       
       self.image, self.rect = image, image.get_rect()
-      self.keyLeft, self.keyRight, self.keyUp = self.keys = keys
-      self.xSpeed, self.ySpeed = (1, 0) # xSpeed right = positive; ySpeed up = positive
+      self.keyLeft, self.keyRight, self.keyUp, self.keyDown = self.keys = keys
+      self.xSpeed, self.ySpeed = (Player.SPEED, Player.SPEED) # xSpeed right = positive; ySpeed up = positive
+      self.state = Player.JUMPED # Maybe change to STANDING later, but player begins in air right now
       
-   def update(self):
-      pass
+   def update(self, keyInput, level):
+      self.oldRect = pygame.Rect(self.rect)
+      self.handleKeyInput(keyInput, level)
+      if self.state == Player.JUMPED:
+         self.jump(level)
+
+   def move(self, xMove, yMove, level):
+      """Move players rect and get corner tiles at new position."""
+      self.rect.move_ip(xMove, -yMove) # yMove is negative because of ySpeed up = positive
+      self.checkOuterBounds() # If we're outside map at new pos, move player
+      self.getCornerTiles(level) # Get corner tiles at new pos (used later, for example in self.fixPosition())
       
-   def move(self, keyInput, level):
-      if keyInput[self.keyUp] and self.onTile(level):
+   def handleKeyInput(self, keyInput, level):
+      """Handles the different keys pressed on the keyboard."""
+      
+      if keyInput[self.keyUp] and self.state != Player.JUMPED:
+         self.state = Player.JUMPED
          self.ySpeed = Player.JUMPSPEED
       if keyInput[self.keyLeft]:
-         self.rect.move_ip(-self.xSpeed, 0)
+         self.move(-self.xSpeed, 0, level)
+         fixedPos = self.fixPosition(LEFT, level)
+         if not fixedPos: self.fall(level) # We can only fall if we move left/right, and haven't got tiles at our left/right
       if keyInput[self.keyRight]:
-         self.rect.move_ip(self.xSpeed, 0)
-   
-   def fall(self): 
-      self.ySpeed -= GRAVITY     
-      self.rect.move_ip(0, -self.ySpeed) # Because of ySpeed up being positive
+         self.move(self.xSpeed, 0, level)
+         fixedPos = self.fixPosition(RIGHT, level)
+         if not fixedPos: self.fall(level) # See above.
       
-   def checkPosition(self, level):
-      """Checks if the player is at the edges of the screen or inside a tile and does apropriate things."""
-      self.checkOuterBounds()   
-      for tile in level.tiles:
-         if not tile.isWalkable and self.rect.colliderect(tile.rect):
-            self.correctPosition(tile)
-
+   def getCornerTiles(self, level, rect=None):
+      """Calculate players corner tiles. An optional rect argument can be passed which gets used instead of players."""
+      if not rect: rect = self.rect
+      self.tileTopLeft = level.get((rect.left, rect.top), True)
+      self.tileTopRight = level.get((rect.right, rect.top), True)
+      self.tileBottomLeft = level.get((rect.left, rect.bottom), True)
+      self.tileBottomRight = level.get((rect.right, rect.bottom), True)
+         
    def checkOuterBounds(self):
+      # Player cant go outside the screens sides, but can jump over top
       if self.rect.left < 0:
          self.rect.left = 0
-      if self.rect.top < 0:
-         self.rect.top = 0
-         self.ySpeed = 0
       if self.rect.right > RES_WIDTH:
          self.rect.right = RES_WIDTH
       if self.rect.top > RES_HEIGHT:
-         self.rect.top = 0 # Move to top of screen if falled all the way down
- 
-   def correctPosition(self, tile):
-      """Correct the position of the player by moving the tile
-      acording the penetration of player rect in the tileRect """
-      smallestPenetrationDir, smallestPenetration = self.getPenetration(tile.rect)
-      if smallestPenetrationDir == UP:
-         self.rect.move_ip(0, -smallestPenetration)
-         self.ySpeed = 0 # so that we stop there and dont fall through the tile
-      elif smallestPenetrationDir == RIGHT:
-         self.rect.move_ip(smallestPenetration, 0)
-      elif smallestPenetrationDir == DOWN:
-         self.rect.move_ip(0, smallestPenetration)
-         self.ySpeed = 0 # so that we "bounce" down again
-      elif smallestPenetrationDir == LEFT:
-         self.rect.move_ip(-smallestPenetration, 0)
-
-   def onTile(self, level):
-      """Checks if player is standing on a tile."""
-      for tile in level.tiles:
-         if not tile.isWalkable:
-            # Return true when +/- 5 px from centerx (halfways outside)
-            if tile.rect.collidepoint(self.rect.centerx+5, self.rect.bottom+1) \
-            or tile.rect.collidepoint(self.rect.centerx-5, self.rect.bottom+1):
-               return True
-      return False
-
-   def getPenetration(self, rectTwo):
-      """This function is a bit ugly, it should be redone nicer maybe, but it works fine anyway.
-      return the smallest direction and ammount of penetration that player.rect does in rectTwo"""
-      #get the penetrations in all directions and put them in penetrations
-      top = self.rect.bottom - rectTwo.top
-      right = rectTwo.right - self.rect.left
-      bottom = rectTwo.bottom - self.rect.top
-      left = self.rect.right - rectTwo.left
-      penetrations = [top, right, bottom, left] 
-      #set smallestPenetration and direction to something stupid
-      smallestPenetration = 10000
-      smallestPenetrationDir = None
+         self.rect.top = 0 # Falled through screen so move to top of screen
+   
+   def jump(self, level):
+      # Player is in the air.
+      self.ySpeed -= GRAVITY
+      # If speed is too high we might miss tiles (and begin moving through walls)
+      if self.ySpeed > Tile.HEIGHT: self.ySpeed = Tile.HEIGHT # speed is bigger than tile's height
       
-      #get ths smallest penetration in penetrations
-      for penetration in penetrations:
-         if penetration < smallestPenetration:
-            smallestPenetration = penetration
+      if self.ySpeed != 0: # Speed is not zero, so move player
+         self.move(0, self.ySpeed, level)
+         if self.ySpeed > 0: # we're going up
+            self.fixPosition(UP, level)
+         elif self.ySpeed < 0: # we're going down
+            self.fixPosition(DOWN, level)
+   
+   def fall(self, level):
+      """Check if we have stepped out into air."""
+      if self.state != Player.JUMPED: # Only if we're not already in the air
+         self.getCornerTiles(level, self.rect.inflate(0, 2)) # We have to expand the rect we're passing as argument
+         if not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable:
+            # We're in the air
+            self.ySpeed = 0 # Start falling
+            self.state = Player.JUMPED # Force state to be jumped
+         
+   def fixPosition(self, dir, level):
+      """Check (and fix) position of player at chosen direction.
       
-      #get the direction of smallest penetration
-      if smallestPenetration==top: 
-         smallestPenetrationDir = UP
-      elif smallestPenetration==right: 
-         smallestPenetrationDir = RIGHT    
-      elif smallestPenetration==bottom: 
-         smallestPenetrationDir = DOWN
-      elif smallestPenetration==left: 
-         smallestPenetrationDir = LEFT
-
-      #print smallestPenetrationDir, smallestPenetration
-      return smallestPenetrationDir, smallestPenetration
+      Returns true if position is changed ("fixed").
+      """
+      
+      # Works like this: If directions corners contains tiles who aren't walkable
+      # we move player as far as we can (to the tile's side).
+      if dir == UP:
+         if not self.tileTopLeft.walkable or not self.tileTopRight.walkable:
+            self.ySpeed = 0
+            self.rect = self.oldRect
+            self.rect.top = level.get((self.rect.centerx, self.rect.top), True).rect.top         
+            return True
+      elif dir == DOWN:
+         if not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable:
+            self.state = Player.STANDING # We've fallen down to solid ground
+            self.rect = self.oldRect
+            self.rect.bottom = level.get((self.rect.centerx, self.rect.bottom), True).rect.bottom-1 # Minus one (important!), because of how rects works
+            return True
+      elif dir == LEFT:
+         if not self.tileTopLeft.walkable or not self.tileBottomLeft.walkable:
+            self.rect = self.oldRect
+            self.rect.left = level.get((self.rect.left, self.rect.centery), True).rect.left
+            return True
+      elif dir == RIGHT:
+         if not self.tileTopRight.walkable or not self.tileBottomRight.walkable:
+            self.rect = self.oldRect
+            self.rect.right = level.get((self.rect.right, self.rect.centery), True).rect.right-1 # Minus one (important!), because of how rects works
+            return True
+            
+      return False # We haven't changed the position of player

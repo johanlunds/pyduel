@@ -29,20 +29,21 @@ class LevelLoader(xml.sax.handler.ContentHandler):
    
    def startElement(self, name, attributes):
       if name == "row": # a new row
-         self.row += 1
          self.col = 0
-      if name == "cell": # a tile
-         tile = Tile(int(attributes["type"]), self.col, self.row)
+      elif name == "cell": # a tile
+         tile = Tile(int(attributes["type"]), (self.col, self.row))
          self.level.add(tile)
+
+   def endElement(self, name): # called at end of element (<element /> or <element></element>)
+      if name == "row":
+         self.row += 1
+      elif name == "cell":
          self.col += 1
 
-#    These methods are not used right now.
+#    This method is not used right now.
 #       
 #    def characters(self, content):
 #       # Content may be a Unicode-string
-#       pass
-#    
-#    def endElement(self, name):
 #       pass
 
 class Level(object):
@@ -54,22 +55,33 @@ class Level(object):
       self.tiles = pygame.sprite.Group()
       # self.currentLevel = 1 # number of currentLevel. Not used right now
    
-   def get(self, col, row, isPixels=False):
+   def get(self, cords, isPixels=False):
       """Returns tile at specified column and row (or x and y px) position in map."""
-      if isPixels:
-         col = int(col/Tile.WIDTH)
-         row = int(row/Tile.HEIGHT)
       
-      for tile in self.tiles.sprites():
+      if isPixels:
+         cords = self.getCordsFromPixels(cords)
+      
+      col, row = cords
+      
+      for tile in self.tiles:
          if tile.col == col and tile.row == row:
             return tile
+            
+      return Tile(0, cords)
    
    def add(self, tile):
       """Add a new tile to map."""
+      
       self.tiles.add(tile)
       
    def draw(self, screen):
       self.tiles.draw(screen)
+      
+   def getCordsFromPixels(self, pos):
+      """Returns column and row position calculated from X and Y position."""
+      
+      x, y = pos
+      return (int(x/Tile.WIDTH), int(y/Tile.HEIGHT))
 
 class Tile(pygame.sprite.Sprite):
 
@@ -79,22 +91,20 @@ class Tile(pygame.sprite.Sprite):
    tiles = (None, "tile-ground-middle.png",  "tile-ground-left.png", "tile-ground-right.png", "tile-ground-bottom.png")  
    #forgroundTiles = ("tile-tree-bottom.png", "tile-tree-top.png", "tile-bush.png",  ) 
    
-   def __init__(self, number, col, row):
+   def __init__(self, type, cords):
       pygame.sprite.Sprite.__init__(self)
       
-      if Tile.tiles[number] is not None: # Check so we don't try to load empty image
-         image = loadImgPng(Tile.tiles[number])
-         self.image = image
-         self.isWalkable = False
+      if Tile.tiles[type] is not None: # Check so we don't try to load empty image
+         self.image = loadImgPng(Tile.tiles[type])
+         self.walkable = False
       else:
          self.image = pygame.Surface((Tile.WIDTH, Tile.HEIGHT))
-         self.isWalkable = True
+         self.walkable = True
       
-      self.newPos(col, row)
+      self.newPos(cords)
    
-   def newPos(self, col, row):
+   def newPos(self, cords):
       """Change position of tile in map. Column and row position. Also sets self.rect"""
       
-      self.col = col
-      self.row = row
+      self.col, self.row = cords
       self.rect = pygame.Rect(Tile.WIDTH*self.col, Tile.HEIGHT*self.row, Tile.WIDTH, Tile.HEIGHT)

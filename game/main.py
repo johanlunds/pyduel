@@ -16,8 +16,8 @@ class Duel(Scene):
    def __init__(self, game):
       Scene.__init__(self, game)
       
-      playerOne = Player(loadImgPng("red.png"), (K_a, K_d, K_w))
-      playerTwo = Player(loadImgPng("blue.png"), (K_LEFT, K_RIGHT, K_UP))
+      playerOne = Player(loadImgPng("red.png"), (K_a, K_d, K_w, K_s))
+      playerTwo = Player(loadImgPng("blue.png"), (K_LEFT, K_RIGHT, K_UP, K_DOWN))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
       self.currentLevel = LevelLoader().load(os.path.join(DIR_LEVELS, "1.xml"))
@@ -28,11 +28,7 @@ class Duel(Scene):
    def loop(self):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
-      for player in self.players:
-         player.move(keyInput, self.currentLevel)
-         player.fall()
-         player.checkPosition(self.currentLevel)
-      self.players.update()
+      self.players.update(keyInput, self.currentLevel)
    
    def update(self):
       self.players.clear(self.game.screen, self.background)
