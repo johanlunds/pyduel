@@ -22,20 +22,19 @@ class Player(pygame.sprite.Sprite):
       self.state = Player.JUMPED # Maybe change to STANDING later, but player begins in air right now
       
    def update(self, keyInput, level):
-      self.oldRect = pygame.Rect(self.rect)
       self.handleKeyInput(keyInput, level)
       if self.state == Player.JUMPED:
          self.jump(level)
 
    def move(self, xMove, yMove, level):
       """Move players rect and get corner tiles at new position."""
+      self.oldRect = pygame.Rect(self.rect)
       self.rect.move_ip(xMove, -yMove) # yMove is negative because of ySpeed up = positive
       self.checkOuterBounds() # If we're outside map at new pos, move player
       self.getCornerTiles(level) # Get corner tiles at new pos (used later, for example in self.fixPosition())
       
    def handleKeyInput(self, keyInput, level):
       """Handles the different keys pressed on the keyboard."""
-      
       if keyInput[self.keyUp] and self.state != Player.JUMPED:
          self.state = Player.JUMPED
          self.ySpeed = Player.JUMPSPEED
@@ -93,7 +92,6 @@ class Player(pygame.sprite.Sprite):
       
       Returns true if position is changed ("fixed").
       """
-      
       # Works like this: If directions corners contains tiles who aren't walkable
       # we move player as far as we can (to the tile's side).
       if dir == UP:

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Define variables and constants used all over in the game."""
+
 import os, sys
 
 import pygame
 from pygame.locals import *
-
-"""Define variables and constants used all over in the game."""
 
 GRAVITY = 0.25 # Move to level files?
 

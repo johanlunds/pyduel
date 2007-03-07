@@ -67,7 +67,6 @@ class Level(object):
    
    def get(self, cords, isPixels=False):
       """Returns tile at specified column and row (or x and y px) position in map."""
-      
       if isPixels:
          cords = self.getCordsFromPixels(cords)
       
@@ -83,7 +82,6 @@ class Level(object):
    
    def add(self, cords, type, otherTileArgs):
       """Add a new tile to map."""
-      
       # Note: otherTileArgs is a dict with ONLY string-values (may have to convert)
       # It will override the arguments in Tile.tiles array.
       
@@ -109,7 +107,6 @@ class Level(object):
       
    def getCordsFromPixels(self, pos):
       """Returns column and row position calculated from X and Y position."""
-      
       x, y = pos
       return (int(x/Tile.WIDTH), int(y/Tile.HEIGHT))
 
@@ -141,7 +138,6 @@ class Tile(pygame.sprite.Sprite):
    
    def newPos(self, cords):
       """Change position of tile in map. Column and row position. Also sets self.rect"""
-      
       self.col, self.row = cords
       self.rect = pygame.Rect(Tile.WIDTH*self.col, Tile.HEIGHT*self.row, Tile.WIDTH, Tile.HEIGHT)
 
