@@ -38,6 +38,8 @@ class Duel(Scene):
    
    def update(self):
       self.players.clear(self.game.screen, self.background)
+      self.level.backgroundTiles.clear(self.game.screen, self.background)
+      self.level.backgroundTiles.draw(self.game.screen)
       self.players.draw(self.game.screen)
         
    def draw(self):
