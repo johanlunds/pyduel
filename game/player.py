@@ -82,7 +82,7 @@ class Player(pygame.sprite.Sprite):
       """Check if we have stepped out into air."""
       if self.state != Player.JUMPED: # Only if we're not already in the air
          self.getCornerTiles(level, self.rect.inflate(0, 2)) # We have to expand the rect we're passing as argument
-         if not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable:
+         if self.tileBottomLeft.walkable and self.tileBottomRight.walkable:
             # We're in the air
             self.ySpeed = 0 # Start falling
             self.state = Player.JUMPED # Force state to be jumped
