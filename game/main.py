@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os
 from engine import Game, Scene
 from level import LevelLoader
 from player import Player
@@ -47,9 +47,6 @@ class Duel(Scene):
       self.players.draw(self.game.screen)
 
 def main():
-   # Change working directory so that the paths work correctly
-   os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
-   
    pyduel = Game(RESOLUTION, CAPTION, ICON)
    firstScene = Duel(pyduel)
    pyduel.start(firstScene) # Start the game with a new Duel scene

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
+import os, sys
 
 import pygame
 from pygame.locals import *
@@ -10,11 +10,14 @@ from pygame.locals import *
 
 GRAVITY = 0.25 # Move to level files?
 
-DIR_GRAPH = os.path.join("data", "graphic")
-DIR_SOUND = os.path.join("data", "sound")
-DIR_MUSIC = os.path.join("data", "music")
-DIR_FONT = os.path.join("data", "font")
-DIR_LEVELS = "levels"
+# Change working directory so that the paths work correctly
+os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+
+DIR_GRAPH = os.path.abspath(os.path.join("data", "graphic"))
+DIR_SOUND = os.path.abspath(os.path.join("data", "sound"))
+DIR_MUSIC = os.path.abspath(os.path.join("data", "music"))
+DIR_FONT = os.path.abspath(os.path.join("data", "font"))
+DIR_LEVELS = os.path.abspath("levels")
 
 loadImg = lambda path: pygame.image.load(os.path.join(DIR_GRAPH, path)).convert()
 loadImgPng = lambda path: pygame.image.load(os.path.join(DIR_GRAPH, path)).convert_alpha()
