@@ -64,6 +64,7 @@ class Level(object):
       self.tiles = pygame.sprite.Group()
       self.noneTiles = pygame.sprite.Group()
       self.backgroundTiles = pygame.sprite.Group()
+      self.cloudTiles = pygame.sprite.Group()
    
    def get(self, cords, isPixels=False):
       """Returns tile at specified column and row (or x and y px) position in map."""
@@ -97,6 +98,8 @@ class Level(object):
          self.noneTiles.add(tile)
       elif tile.__class__ is BackgroundTile:
          self.backgroundTiles.add(tile)
+      elif tile.__class__ is CloudTile:
+         self.cloudTiles.add(tile)
       
    def draw(self, screen):
       # First we remove all none tiles from self.tiles.
@@ -127,7 +130,10 @@ class Tile(pygame.sprite.Sprite):
             ("", {"image": "tile-ground-bottom.png"}),
             ("Background", {"image": "tile-tree-bottom.png"}),
             ("Background", {"image": "tile-tree-top.png"}),
-            ("Background", {"image": "tile-bush.png"})]
+            ("Background", {"image": "tile-bush.png"}),
+            ("Cloud", {"image": "tile-ground-cloud-middle.png"}),
+            ("Cloud", {"image": "tile-ground-cloud-left.png"}),
+            ("Cloud", {"image": "tile-ground-cloud-right.png"})]
    
    def __init__(self, cords, image, *args):
       pygame.sprite.Sprite.__init__(self)
@@ -135,6 +141,7 @@ class Tile(pygame.sprite.Sprite):
       self.image = loadImgPng(image) # lazy loading of images. Todo: comment more. explain
       self.newPos(cords)
       self.walkable = False
+      self.isCloud = False
    
    def newPos(self, cords):
       """Change position of tile in map. Column and row position. Also sets self.rect"""
@@ -150,6 +157,7 @@ class NoneTile(Tile):
       self.image = None
       self.newPos(cords) # We have to set this manually (we don't use Tile.__init__())
       self.walkable = True
+      self.isCloud = False
 
 class BackgroundTile(Tile):
    """The background tiles have an image, but are walkable."""
@@ -158,3 +166,12 @@ class BackgroundTile(Tile):
       Tile.__init__(self, cords, image)
       
       self.walkable = True
+
+class CloudTile(Tile):
+   """Cloud tiles can be entered from any direction, except from the top."""
+   
+   def __init__(self, cords, image):
+      Tile.__init__(self, cords, image)
+      
+      self.walkable = True
+      self.isCloud = True

@@ -82,11 +82,11 @@ class Player(pygame.sprite.Sprite):
       """Check if we have stepped out into air."""
       if self.state != Player.JUMPED: # Only if we're not already in the air
          self.getCornerTiles(level, self.rect.inflate(0, 2)) # We have to expand the rect we're passing as argument
-         if self.tileBottomLeft.walkable and self.tileBottomRight.walkable:
+         if not self.hasHitGround() and not self.isOnCloud(level): # Check expanded rect's position
             # We're in the air
             self.ySpeed = 0 # Start falling
             self.state = Player.JUMPED # Force state to be jumped
-         
+   
    def fixPosition(self, dir, level):
       """Check position of player at chosen direction and fix if we've hit something.
       
@@ -95,24 +95,49 @@ class Player(pygame.sprite.Sprite):
       # Works like this: If directions corners contains tiles who aren't walkable
       # we move player as far as we can (to the tile's side).
       if dir == UP:
-         if not self.tileTopLeft.walkable or not self.tileTopRight.walkable:
+         if self.hasHitCeiling():
             self.rect = self.oldRect
             self.rect.top = level.get((self.rect.centerx, self.rect.top), True).rect.top         
             return True
       elif dir == DOWN:
-         if not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable:
+         if self.hasHitGround() or self.isOnCloud(level):
             self.rect = self.oldRect
             self.rect.bottom = level.get((self.rect.centerx, self.rect.bottom), True).rect.bottom-1 # Minus one (important!), because of how rects works
             return True
       elif dir == LEFT:
-         if not self.tileTopLeft.walkable or not self.tileBottomLeft.walkable:
+         if self.hasHitWall(dir):
             self.rect = self.oldRect
             self.rect.left = level.get((self.rect.left, self.rect.centery), True).rect.left
             return True
       elif dir == RIGHT:
-         if not self.tileTopRight.walkable or not self.tileBottomRight.walkable:
+         if self.hasHitWall(dir):
             self.rect = self.oldRect
             self.rect.right = level.get((self.rect.right, self.rect.centery), True).rect.right-1 # Minus one (important!), because of how rects works
             return True
             
       return False # We haven't changed the position of player
+
+   def isOnCloud(self, level):
+      """If player is on cloud return true, else return false."""
+      if self.tileBottomLeft.isCloud or self.tileBottomRight.isCloud:
+         if self.state != Player.JUMPED:
+            return True
+         
+         # If we've come down here, player is in a jump, he's falling down
+         # and he's in a cloud. Check if he just entered the cloud from above
+         newTile = level.get((self.rect.centerx, self.rect.bottom), True)
+         oldTile = level.get((self.oldRect.centerx, self.oldRect.bottom), True)
+
+         if newTile.row > oldTile.row:
+            return True
+      return False
+
+   def hasHitCeiling(self):
+      return (not self.tileTopLeft.walkable or not self.tileTopRight.walkable)
+      
+   def hasHitWall(self, dir):
+      if dir == LEFT: return (not self.tileTopLeft.walkable or not self.tileBottomLeft.walkable)
+      if dir == RIGHT: return (not self.tileTopRight.walkable or not self.tileBottomRight.walkable)
+   
+   def hasHitGround(self):
+      return (not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable)
