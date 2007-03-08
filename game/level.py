@@ -17,39 +17,67 @@ class LevelLoader(xml.sax.handler.ContentHandler):
 
    def __init__(self):
       self.level = None # set in self.load()
-      self.col = 0
-      self.row = 0
    
    def load(self, filename):
       """Open file and parse contents. Returns new level object."""
       self.level = Level()
-      self.col = 0
-      self.row = 0
+      self.propertiesForCell = {}
+      self.propertiesForLayer = {}
+      self.propertiesForMap = {}
       
       parser = xml.sax.make_parser()
       parser.setContentHandler(self) # Set current object to parse contents of file
       parser.parse(filename)
       return self.level # We have a new level
    
-   def startElement(self, name, attributesObject):
-      if name == "row": # a new row
+   def startElement(self, name, attributesObj):
+      # Create normal dict from attribute object (http://docs.python.org/lib/attributes-objects.html)
+      attributes = {}
+      for attr, value in attributesObj.items():
+         attributes[attr] = value
+   
+      # If we have a property element later, we have to know what the property is for
+      if name in ("cell", "map", "layer"):
+         self.propertiesFor = name
+
+      if name == "row":
          self.col = 0
-      elif name == "cell": # a tile
-         # Create normal dict from attribute object (http://docs.python.org/lib/attributes-objects.html)
-         # we pass this variable on to other functions
-         attributes = {}
-         for attr, value in attributesObject.items():
-            attributes[attr] = value
-         
-         cords = (self.col, self.row)
-         type = int(attributes.pop("type", 0)) # Get and remove, or return 0 (2nd arg)
-         self.level.add(cords, type, attributes)
+      elif name == "layer":
+         self.col, self.row = (0, 0)
+         self.position = attributes.get("position", "implicit") # if not found return 2nd arg
+         if attributes["name"] == "ladders":
+            self.addTileFunc = self.level.addLadder
+         else:
+            self.addTileFunc = self.level.add
+      elif name == "cell":
+         self.cellAttributes = attributes # used when cell element ends
+      elif name == "property":
+         # we add the property to the right dictionary
+         if self.propertiesFor == "cell":
+            self.propertiesForCell[attributes["name"]] = attributes["value"]
+         elif self.propertiesFor == "layer":
+            self.propertiesForLayer[attributes["name"]] = attributes["value"]
+         elif self.propertiesFor == "map":
+            self.propertiesForMap[attributes["name"]] = attributes["value"]
 
    def endElement(self, name): # called at end of element (<element /> or <element></element>)
       if name == "row":
          self.row += 1
+      elif name == "layer":
+         self.propertiesForLayer = {} # reset
       elif name == "cell":
-         self.col += 1
+         if self.position == "explicit":
+            # means we have col and row values in attributes
+            cords = (int(self.cellAttributes["col"]), int(self.cellAttributes["row"]))
+         else: # default
+            cords = (self.col, self.row)
+            
+         type = int(self.cellAttributes.pop("type", 0)) # Get and remove, or return 2nd arg
+         # addTileFunc is set depending on layer (see self.startElement())
+         self.addTileFunc(cords, type, self.propertiesForCell)
+         
+         self.col += 1 # after we've added the tile
+         self.propertiesForCell = {} # reset
 
 #    This method is not used right now.
 #       
@@ -65,7 +93,19 @@ class Level(object):
       self.noneTiles = pygame.sprite.Group()
       self.backgroundTiles = pygame.sprite.Group()
       self.cloudTiles = pygame.sprite.Group()
-   
+
+   def draw(self, screen):
+      # First we remove all none tiles from self.tiles.
+      # If we don't, we'll get an error (has no image attribute)
+      self.tiles.remove(self.noneTiles)
+      self.tiles.draw(screen)
+      self.tiles.add(self.noneTiles) # add them again
+      
+   def getCordsFromPixels(self, pos):
+      """Returns column and row position calculated from X and Y position."""
+      x, y = pos
+      return (int(x/Tile.WIDTH), int(y/Tile.HEIGHT))
+       
    def get(self, cords, isPixels=False):
       """Returns tile at specified column and row (or x and y px) position in map."""
       if isPixels:
@@ -86,6 +126,7 @@ class Level(object):
       # Note: otherTileArgs is a dict with ONLY string-values (may have to convert)
       # It will override the arguments in Tile.tiles array.
       
+      if not type: type = Tile.default
       tileClass, tileArgs = Tile.tiles[type]
       tileClass = eval("%sTile" % (tileClass, )) # Get tile class
       tileArgs.update(otherTileArgs) # add (and overwrite) key/value pairs
@@ -100,18 +141,9 @@ class Level(object):
          self.backgroundTiles.add(tile)
       elif tile.__class__ is CloudTile:
          self.cloudTiles.add(tile)
-      
-   def draw(self, screen):
-      # First we remove all none tiles from self.tiles.
-      # If we don't, we'll get an error (has no image attribute)
-      self.tiles.remove(self.noneTiles)
-      self.tiles.draw(screen)
-      self.tiles.add(self.noneTiles) # add them again
-      
-   def getCordsFromPixels(self, pos):
-      """Returns column and row position calculated from X and Y position."""
-      x, y = pos
-      return (int(x/Tile.WIDTH), int(y/Tile.HEIGHT))
+   
+   def addLadder(self, cords, type, otherTileArgs):
+      pass
 
 class Tile(pygame.sprite.Sprite):
    """Generic tile class. Tiles have an image and is not walkable by default.
@@ -120,6 +152,9 @@ class Tile(pygame.sprite.Sprite):
    """
 
    WIDTH, HEIGHT = (20, 20) # Width and height of tiles
+
+   # Tile defaults. Refers to index in tiles array
+   default = 0
 
    # Available tiles.
    # Format: (classname's prefix, dict with arguments passed to class)
@@ -133,7 +168,8 @@ class Tile(pygame.sprite.Sprite):
             ("Background", {"image": "tile-bush.png"}),
             ("Cloud", {"image": "tile-ground-cloud-middle.png"}),
             ("Cloud", {"image": "tile-ground-cloud-left.png"}),
-            ("Cloud", {"image": "tile-ground-cloud-right.png"})]
+            ("Cloud", {"image": "tile-ground-cloud-right.png"}),
+            ("Ladder", {"image": "tile-ladder.png"})]
    
    def __init__(self, cords, image, *args):
       pygame.sprite.Sprite.__init__(self)

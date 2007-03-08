@@ -1,818 +1,843 @@
-<?xml version="1.0" ?>
-<map><row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="6" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="7" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="7" />
-<cell />
-<cell type="7" />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell type="6" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell type="6" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="5" />
-<cell type="6" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="5" />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="5" />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="9" />
-<cell type="8" />
-<cell type="8" />
-<cell type="8" />
-<cell type="8" />
-<cell type="10" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell type="5" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-</row>
-<row>
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="3" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="2" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-<cell type="1" />
-</row>
-<row>
-<cell type="4" />
-<cell type="4" />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell />
-<cell type="4" />
-<cell type="4" />
-</row>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Från http://lexin.nada.kth.se/cgi-bin/sve-eng:
+   explicit = tydlig, klar, uttalad, explicit (adjektiv)
+   implicit = underförstådd, implicit, tyst, stillatigande (adjektiv)
+-->
+<map>
+   <!--
+   <property name="" value="" />
+   <layer name="ladders" position="explicit">
+      <property name="" value="" />
+      <data>
+         <cell col="" row="" type="" />
+      </data>
+   </layer>
+   -->
+   <!-- name defaults to "normal" and position to "implicit", so really not necessary -->
+   <layer name="normal" position="implicit">
+      <data>
+         <row>
+            <!--
+            <cell>
+               <property name="" value="" />
+            </cell>
+            -->
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="6" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="7" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="7" />
+            <cell />
+            <cell type="7" />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell type="6" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell type="6" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="5" />
+            <cell type="6" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="5" />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="5" />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="9" />
+            <cell type="8" />
+            <cell type="8" />
+            <cell type="8" />
+            <cell type="8" />
+            <cell type="10" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell type="5" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+         </row>
+         <row>
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="3" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="2" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+            <cell type="1" />
+         </row>
+         <row>
+            <cell type="4" />
+            <cell type="4" />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell />
+            <cell type="4" />
+            <cell type="4" />
+         </row>
+      </data>
+   </layer>
 </map>
