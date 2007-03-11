@@ -54,6 +54,8 @@ class Player(pygame.sprite.Sprite):
       self.tileTopRight = level.get((rect.right, rect.top), True)
       self.tileBottomLeft = level.get((rect.left, rect.bottom), True)
       self.tileBottomRight = level.get((rect.right, rect.bottom), True)
+      self.tileMiddleLeft = level.get((rect.left, rect.centery), True)
+      self.tileMiddleRight = level.get((rect.right, rect.centery), True)
          
    def checkOuterBounds(self):
       # Player cant go outside the screens sides, but can jump over top
@@ -136,8 +138,8 @@ class Player(pygame.sprite.Sprite):
       return (not self.tileTopLeft.walkable or not self.tileTopRight.walkable)
       
    def hasHitWall(self, dir):
-      if dir == LEFT: return (not self.tileTopLeft.walkable or not self.tileBottomLeft.walkable)
-      if dir == RIGHT: return (not self.tileTopRight.walkable or not self.tileBottomRight.walkable)
+      if dir == LEFT: return (not self.tileTopLeft.walkable or not self.tileBottomLeft.walkable or not self.tileMiddleLeft.walkable)
+      if dir == RIGHT: return (not self.tileTopRight.walkable or not self.tileBottomRight.walkable or not self.tileMiddleRight.walkable)
    
    def hasHitGround(self):
       return (not self.tileBottomLeft.walkable or not self.tileBottomRight.walkable)
