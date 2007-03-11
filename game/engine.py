@@ -15,7 +15,7 @@ class Game(object):
       pygame.init()
       if not (pygame.mixer or pygame.font): raise SystemExit, "Missing required Pygame mixer and/or font modules."
       
-      self.screen = pygame.display.set_mode(resolution)
+      self.screen = pygame.display.set_mode(resolution, FULLSCREEN)
       if caption:
          pygame.display.set_caption(caption)
       if icon:
@@ -23,7 +23,7 @@ class Game(object):
          pygame.display.set_icon(icon)
 
       self.clock = pygame.time.Clock()
-   
+
    def tick(self):
       """Limits framerate. Call in game loop."""
       self.clock.tick(Game.FRAMERATE)
