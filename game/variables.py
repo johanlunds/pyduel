@@ -10,7 +10,6 @@ from pygame.locals import *
 
 GRAVITY = 0.25 # Move to level files?
 
-
 # Change working directory so that the paths work correctly
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
@@ -44,5 +43,3 @@ def loadImageFrames(filename, frameWidth, frameHeight, ammount, flip=False):
          frames.append(frame)
 
    return frames     
-
-

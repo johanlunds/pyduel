@@ -16,17 +16,16 @@ class Duel(Scene):
    def __init__(self, game):
       Scene.__init__(self, game)
      
-      playerOne = Player("player-red.png", (K_a, K_d, K_w, K_s))
-      playerTwo = Player("player-blue.png", (K_LEFT, K_RIGHT, K_UP, K_DOWN))
+      playerOne = Player(self, "player-red.png", (K_a, K_d, K_w, K_s, K_SPACE))
+      playerTwo = Player(self, "player-blue.png", (K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
-      self.levelLoader = LevelLoader()
-      self.loadLevel(1) # First level
+      self.levelLoader = LevelLoader(self)
+      self.loadLevel(0) # First level
    
    def loadLevel(self, levelNumber):
       self.levelNumber = levelNumber
-      index = self.levelNumber-1 # index in list is minus one
-      self.level = self.levelLoader.load(self.levelLoader.__class__.levels[index]) # use level list from level loader's class
+      self.level = self.levelLoader.load(self.levelLoader.__class__.levels[levelNumber]) # use level list from level loader's class
    
    def event(self, event):
       pass
@@ -35,7 +34,6 @@ class Duel(Scene):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
       self.players.update(keyInput, self.level)
-      
    
    def update(self):
       self.players.clear(self.game.screen, self.background)

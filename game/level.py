@@ -15,12 +15,13 @@ class LevelLoader(xml.sax.handler.ContentHandler):
    # The list is sorted, so just use next item in list to load next level
    levels = filter(os.path.isfile, [os.path.join(DIR_LEVELS, entry) for entry in os.listdir(DIR_LEVELS)])
 
-   def __init__(self):
+   def __init__(self, scene):
+      self.scene = scene
       self.level = None # set in self.load()
    
    def load(self, filename):
       """Open file and parse contents. Returns new level object."""
-      self.level = Level()
+      self.level = Level(self.scene)
       self.propertiesForCell = {}
       self.propertiesForLayer = {}
       self.propertiesForMap = {}
@@ -88,7 +89,8 @@ class LevelLoader(xml.sax.handler.ContentHandler):
 class Level(object):
    """Level class for levels in the game."""
 
-   def __init__(self):
+   def __init__(self, scene):
+      self.scene = scene
       self.tiles = pygame.sprite.Group()
       self.noneTiles = pygame.sprite.Group()
       self.backgroundTiles = pygame.sprite.Group()
@@ -101,24 +103,30 @@ class Level(object):
       self.tiles.draw(screen)
       self.tiles.add(self.noneTiles) # add them again
       
+   def getPixelsFromCords(self, cords):
+      """Returns X and Y position calculated from column and row position."""
+      col, row = cords
+      return (col*Tile.WIDTH, row*Tile.HEIGHT)
+      
    def getCordsFromPixels(self, pos):
       """Returns column and row position calculated from X and Y position."""
       x, y = pos
       return (int(x/Tile.WIDTH), int(y/Tile.HEIGHT))
        
-   def get(self, cords, isPixels=False):
-      """Returns tile at specified column and row (or x and y px) position in map."""
-      if isPixels:
+   def get(self, cords, isCords=False):
+      """Returns tile at specified x and y (or column and row) position in map."""
+      if isCords:
+         cords = pos
+      else:
          cords = self.getCordsFromPixels(cords)
       
       col, row = cords
-      
       for tile in self.tiles:
          if tile.col == col and tile.row == row:
             return tile
-      
+            
       # If there's no tile at the coordinates (outside of screen for example)
-      # then return dummy-tile (prevents errors)
+      # then return dummy-tile (prevents errors)      
       return NoneTile(cords)
    
    def add(self, cords, type, otherTileArgs):
@@ -174,9 +182,9 @@ class Tile(pygame.sprite.Sprite):
    def __init__(self, cords, image, *args):
       pygame.sprite.Sprite.__init__(self)
       
-      self.image = loadImgPng(image) # lazy loading of images. Todo: comment more. explain
+      self.image = loadImgPng(image) # lazy loading of images.
       self.newPos(cords)
-      self.walkable = False
+      self.isWalkable = False
       self.isCloud = False
    
    def newPos(self, cords):
@@ -192,7 +200,7 @@ class NoneTile(Tile):
       
       self.image = None
       self.newPos(cords) # We have to set this manually (we don't use Tile.__init__())
-      self.walkable = True
+      self.isWalkable = True
       self.isCloud = False
 
 class BackgroundTile(Tile):
@@ -201,7 +209,7 @@ class BackgroundTile(Tile):
    def __init__(self, cords, image):
       Tile.__init__(self, cords, image)
       
-      self.walkable = True
+      self.isWalkable = True
 
 class CloudTile(Tile):
    """Cloud tiles can be entered from any direction, except from the top."""
@@ -209,5 +217,5 @@ class CloudTile(Tile):
    def __init__(self, cords, image):
       Tile.__init__(self, cords, image)
       
-      self.walkable = True
+      self.isWalkable = True
       self.isCloud = True
