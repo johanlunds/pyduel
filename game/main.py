@@ -33,7 +33,7 @@ class Duel(Scene):
    def loop(self):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
-      self.players.update(keyInput, self.level)
+      self.players.update(keyInput)
    
    def update(self):
       self.players.clear(self.game.screen, self.background)

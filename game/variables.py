@@ -28,18 +28,4 @@ UP, RIGHT, DOWN, LEFT = range(4) # Directions
 
 loadImg = lambda path: pygame.image.load(os.path.join(DIR_GRAPH, path)).convert()
 loadImgPng = lambda path: pygame.image.load(os.path.join(DIR_GRAPH, path)).convert_alpha()
-
-def loadImageFrames(filename, frameWidth, frameHeight, ammount, flip=False):
-   """Takes a image containing ammount of frames in one row and returns a list of subsurfaces devided by frameWidth/Height, if flip is true it includes Horizontally flipped frames. the order of the flipped ones is inverted. """
-   images = []
-   images.append(loadImgPng(filename))
-   if flip == True:
-      images.append(pygame.transform.flip(loadImgPng(filename), True, False))
-   frames = []
-   for image in images:
-      for i in range(ammount):
-         rect = pygame.rect.Rect(i*frameWidth, 0, frameWidth, frameHeight)
-         frame = image.subsurface(rect)
-         frames.append(frame)
-
-   return frames     
+ 

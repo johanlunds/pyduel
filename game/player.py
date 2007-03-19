@@ -3,7 +3,7 @@
 
 from level import Tile
 from variables import *
-
+from animation import Animation
 import pygame
 from pygame.locals import *
 
@@ -14,16 +14,15 @@ class Player(pygame.sprite.Sprite):
    STANDING, JUMPING, CLIMBING = range(3) # States of player
    ANIMATIONSPEED = 15
    FRAMES = 4
-   WIDTH = 18
-   HEIGHT = 36 
+   SIZE = (18,36) 
 
    def __init__(self, scene, image, keys):
       pygame.sprite.Sprite.__init__(self)
       
       self.scene = scene
-      self.frames = loadImageFrames(image, Player.WIDTH, Player.HEIGHT, Player.FRAMES, True)
-      self.currentFrame = 0
-      self.image, self.rect = self.frames[self.currentFrame], self.frames[self.currentFrame].get_rect()
+      self.animation = Animation(image, Player.SIZE, Player.FRAMES)
+      self.image = self.animation.getCurrentFrame()
+      self.rect = self.image.get_rect()
       self.keyLeft, self.keyRight, self.keyUp, self.keyDown, self.keyJump = self.keys = keys
       self.xSpeed, self.ySpeed = (Player.SPEED, Player.SPEED) # xSpeed right = positive; ySpeed up = positive
       self.state = Player.JUMPING # Maybe change to STANDING later, but player begins in air right now
@@ -65,23 +64,23 @@ class Player(pygame.sprite.Sprite):
 
    def changeDirection(self):
       """Change which way the player is facing, adjust self.facing and currentFrame acordingly"""
-      if self.facing is LEFT:
-         self.currentFrame = 0
+      if self.facing == LEFT:
+         self.animation.currentFrame = 0
          self.facing = RIGHT
-      elif self.facing is RIGHT:
-         self.currentFrame = Player.FRAMES*2 - 1
+      elif self.facing == RIGHT:
+         self.animation.currentFrame = Player.FRAMES*2 - 1
          self.facing = LEFT
       self.changeFrame()
 
    def changeFrame(self):
       """Go to the next frame if we are walking, go to first if we passed the last or if we aren't walking. note that the frames facing left are mirrored, therefor we do -1 instead of +1"""  
-      if self.facing is RIGHT:
-         if self.isWalking is True: self.currentFrame += 1
-         if self.currentFrame is Player.FRAMES or self.isWalking is False: self.currentFrame = 0
-      elif self.facing is LEFT:
-         if self.isWalking is True: self.currentFrame += -1
-         if self.currentFrame is Player.FRAMES - 1 or self.isWalking is False: self.currentFrame = Player.FRAMES*2 - 1
-      self.image = self.frames[self.currentFrame] 
+      if self.facing  == RIGHT:
+         if self.isWalking is True: self.animation.currentFrame += 1
+         if self.animation.currentFrame == Player.FRAMES or self.isWalking == False: self.animation.currentFrame = 0
+      elif self.facing == LEFT:
+         if self.isWalking is True: self.animation.currentFrame += -1
+         if self.animation.currentFrame == Player.FRAMES - 1 or self.isWalking == False: self.animation.currentFrame = Player.FRAMES*2 - 1
+      self.image = self.animation.getCurrentFrame()
 
    def getCornerTiles(self, rect=None):
       """Calculate players corner tiles.
