@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from level import Tile
+from tile import Tile
 from variables import *
 from animation import Animation
 import pygame
@@ -111,9 +111,7 @@ class Player(pygame.sprite.Sprite):
       if self.rect.right > RES_WIDTH:
          self.rect.left = 0
       if self.rect.top > RES_HEIGHT:
-         self.rect.top = 0 # Falled through screen so move to top of screen
-      if self.rect.bottom < 0:
-         self.rect.top = RES_HEIGHT
+         self.rect.bottom = 0 # Falled through screen so move to top of screen
    
    def jump(self):
       if self.state != Player.JUMPING: return
