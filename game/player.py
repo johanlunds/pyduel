@@ -9,8 +9,8 @@ from pygame.locals import *
 
 class Player(pygame.sprite.Sprite):
 
-   JUMPSPEED = 8 # Speed at start of jump
-   SPEED = 2 # Walking speed
+   JUMPSPEED = 14 # Speed at start of jump
+   SPEED = 4 # Walking speed
    STANDING, JUMPING, CLIMBING = range(3) # States of player
    ANIMATIONSPEED = 15
    FRAMES = 4

@@ -8,7 +8,7 @@ import os, sys
 import pygame
 from pygame.locals import *
 
-GRAVITY = 0.25 # Move to level files?
+GRAVITY = 1 # Move to level files?
 
 # Change working directory so that the paths work correctly
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
