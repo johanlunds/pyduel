@@ -36,12 +36,17 @@ class Duel(Scene):
       self.players.update(keyInput)
    
    def update(self):
+      self.level.tiles.remove(self.level.noneTiles) # why? see Level.draw()
+      
       self.players.clear(self.game.screen, self.background)
-      self.level.backgroundTiles.clear(self.game.screen, self.background)
-      self.level.cloudTiles.clear(self.game.screen, self.background)
-      self.level.cloudTiles.draw(self.game.screen)
-      self.level.backgroundTiles.draw(self.game.screen)
+      self.level.tiles.clear(self.game.screen, self.background)
+      self.level.ladderTiles.clear(self.game.screen, self.background)
+      
+      self.level.tiles.draw(self.game.screen)
+      self.level.ladderTiles.draw(self.game.screen)
       self.players.draw(self.game.screen)
+      
+      self.level.tiles.add(self.level.noneTiles)
         
    def draw(self):
       self.level.draw(self.game.screen)

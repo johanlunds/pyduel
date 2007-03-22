@@ -7,6 +7,34 @@ from animation import Animation
 import pygame
 from pygame.locals import *
 
+class SurroundingTiles(object):
+   """Help class for Player-class. Holds variables for player's surrounding (and center) tiles."""
+   
+   def __init__(self, rect, scene):
+      self.forRect = rect
+      self.getFunc = scene.level.get # Function used to fetch tiles
+      self.setCenter()
+      self.setSides()
+      self.setCorners()
+      
+   def setCenter(self):
+      rect = self.forRect
+      self.center = self.getFunc((rect.centerx, rect.centery))
+      
+   def setSides(self):
+      rect = self.forRect
+      self.left = self.getFunc((rect.left, rect.centery))
+      self.right = self.getFunc((rect.right, rect.centery))
+      self.top = self.getFunc((rect.centerx, rect.top))
+      self.bottom = self.getFunc((rect.centerx, rect.bottom))
+   
+   def setCorners(self):
+      rect = self.forRect
+      self.topLeft = self.getFunc((rect.left, rect.top))
+      self.topRight = self.getFunc((rect.right, rect.top))
+      self.bottomLeft = self.getFunc((rect.left, rect.bottom))
+      self.bottomRight = self.getFunc((rect.right, rect.bottom))   
+   
 class Player(pygame.sprite.Sprite):
 
    JUMPSPEED = 14 # Speed at start of jump
@@ -42,25 +70,62 @@ class Player(pygame.sprite.Sprite):
       self.oldRect = pygame.Rect(self.rect)
       self.rect.move_ip(xMove, -yMove) # yMove is negative because of ySpeed up = positive
       self.checkOuterBounds() # If we're outside map at new pos, move player
-      self.getCornerTiles() # Get corner tiles at new pos (used later, for example in self.fixPosition())
-      self.getSideTiles()
+      self.setTiles() # get surrounding tiles of player
+   
+   def setTiles(self, rect=None):
+      """Sets player's present and previous surrounding tiles.
+      
+      An optional rect argument can be passed, wich gets used instead.
+      """
+      if rect:
+         self.tiles = SurroundingTiles(rect, self.scene)
+      else:
+         self.oldTiles = SurroundingTiles(self.oldRect, self.scene)
+         self.tiles = SurroundingTiles(self.rect, self.scene)
       
    def handleKeyInput(self, keyInput):
       """Handles the different keys pressed on the keyboard."""
       self.isWalking = False
-      if keyInput[self.keyJump] and self.state != Player.JUMPING:
+      
+      if keyInput[self.keyJump] and self.state not in (Player.JUMPING, Player.CLIMBING):
          self.state = Player.JUMPING
          self.ySpeed = Player.JUMPSPEED
+      
       if keyInput[self.keyLeft]:
          self.move(-self.xSpeed, 0)
          if self.facing == RIGHT: self.changeDirection()
          self.isWalking = True
-         self.fixPosition(LEFT)
-      if keyInput[self.keyRight]:
+         if self.state == Player.CLIMBING:
+            if self.hasHitWall(LEFT): self.rect = self.oldRect
+            # else we moved onto ground or into air (state will change in self.fall if air)
+            else: self.state = Player.STANDING
+         else: # move as usual
+            self.fixPosition(LEFT)
+      elif keyInput[self.keyRight]:
          self.move(self.xSpeed, 0)
          if self.facing == LEFT: self.changeDirection()
          self.isWalking = True
-         self.fixPosition(RIGHT)
+         if self.state == Player.CLIMBING:
+            if self.hasHitWall(RIGHT): self.rect = self.oldRect
+            # else we moved onto ground or into air (state will change in self.fall if air)
+            else: self.state = Player.STANDING
+         else: # move as usual
+            self.fixPosition(RIGHT)
+            
+      if keyInput[self.keyUp] and self.state != Player.JUMPING:
+         self.move(0, Player.SPEED)
+         if self.canClimb(UP): # also fixes pos if we hit ceiling and is on ladder
+            self.climb()
+         else:
+            self.rect = self.oldRect
+      elif keyInput[self.keyDown] and self.state != Player.JUMPING:
+         self.move(0, -Player.SPEED)
+         if self.canClimb(DOWN):
+            self.climb()
+         elif not self.fixPosition(DOWN): # Check if we've hit ground, and fix position in that case
+            # Else we're in the air
+            self.ySpeed = 0 # Start falling
+            self.state = Player.JUMPING # Force state to be JUMPING
 
    def changeDirection(self):
       """Change which way the player is facing, adjust self.facing and currentFrame acordingly"""
@@ -80,36 +145,14 @@ class Player(pygame.sprite.Sprite):
       elif self.facing == LEFT:
          if self.isWalking is True: self.animation.currentFrame += -1
          if self.animation.currentFrame == Player.FRAMES - 1 or self.isWalking == False: self.animation.currentFrame = Player.FRAMES*2 - 1
-      self.image = self.animation.getCurrentFrame()
-
-   def getCornerTiles(self, rect=None):
-      """Calculate players corner tiles.
-      
-      An optional rect argument can be passed which gets used instead of players.
-      """
-      if not rect: rect = self.rect
-      self.tileTopLeft = self.scene.level.get((rect.left, rect.top))
-      self.tileTopRight = self.scene.level.get((rect.right, rect.top))
-      self.tileBottomLeft = self.scene.level.get((rect.left, rect.bottom))
-      self.tileBottomRight = self.scene.level.get((rect.right, rect.bottom))
-   
-   def getSideTiles(self, rect=None):
-      """Calculate players tiles on his four sides.
-      
-      An optional rect argument can be passed which gets used instead of players.
-      """
-      if not rect: rect = self.rect
-      self.tileLeft = self.scene.level.get((rect.left, rect.centery))
-      self.tileRight = self.scene.level.get((rect.right, rect.centery))
-      self.tileTop = self.scene.level.get((rect.centerx, rect.top))
-      self.tileBottom = self.scene.level.get((rect.centerx, rect.bottom))     
+      self.image = self.animation.getCurrentFrame()   
          
    def checkOuterBounds(self):
       # Player cant go outside the screens sides, but can jump over top
       if self.rect.right < 0:
-         self.rect.right = RES_WIDTH 
-      if self.rect.right > RES_WIDTH:
-         self.rect.left = 0
+         self.rect.left = RES_WIDTH-1 
+      if self.rect.left > RES_WIDTH:
+         self.rect.right = 1
       if self.rect.top > RES_HEIGHT:
          self.rect.bottom = 0 # Falled through screen so move to top of screen
    
@@ -118,7 +161,8 @@ class Player(pygame.sprite.Sprite):
       # Player is in the air.
       self.ySpeed -= GRAVITY
       # If speed is too high we might miss tiles (and begin moving through walls)
-      if self.ySpeed > Tile.HEIGHT: self.ySpeed = Tile.HEIGHT # speed is bigger than tile's height
+      if self.ySpeed < -Tile.HEIGHT: self.ySpeed = -Tile.HEIGHT # speed is bigger than tile's height
+      elif self.ySpeed > Tile.HEIGHT: self.ySpeed = Tile.HEIGHT
       
       self.move(0, self.ySpeed)
       if self.ySpeed > 0: # we're going up
@@ -130,12 +174,21 @@ class Player(pygame.sprite.Sprite):
    
    def fall(self):
       """Check if we have stepped out into air."""
-      if self.state == Player.JUMPING: return # Only if we're not already in the air
-      self.getCornerTiles(self.rect.inflate(0, 2)) # We have to expand the rect we're passing as argument
-      if not self.hasHitGround() and not self.isOnCloud(): # Check expanded rect's position
-         # We're in the air
-         self.ySpeed = 0 # Start falling
+      if self.state in (Player.JUMPING, Player.CLIMBING): return # Only if we're not already in the air or climbing
+      
+      # We have to check if there's air underneath us.
+      # Use setTiles with an expanded rect to accomplish this,
+      # but save the real tiles first. We'll set them back later, to avoid strange bugs
+      temp = self.tiles
+      self.setTiles(self.rect.inflate(0, 2))
+      if not self.hasHitGround() and not self.isOnCloud():
+         self.ySpeed = 0 # We're in the air: start falling
          self.state = Player.JUMPING # Force state to be JUMPING
+      self.tiles = temp # Set the real tiles again
+   
+   def climb(self):
+      self.state = Player.CLIMBING
+      self.rect.centerx = self.tiles.center.rect.centerx # center player on X-axis in tile
    
    def fixPosition(self, dir):
       """Check position of player at chosen direction and fix if we've hit something.
@@ -147,47 +200,60 @@ class Player(pygame.sprite.Sprite):
       if dir == UP:
          if self.hasHitCeiling():
             self.rect = self.oldRect
-            self.rect.top = self.scene.level.get((self.rect.centerx, self.rect.top)).rect.top         
+            self.rect.top = self.oldTiles.top.rect.top         
             return True
       elif dir == DOWN:
          if self.hasHitGround() or self.isOnCloud():
             self.rect = self.oldRect
-            self.rect.bottom = self.scene.level.get((self.rect.centerx, self.rect.bottom)).rect.bottom-1 # Minus one (important!), because of how rects works
+            self.rect.bottom = self.oldTiles.bottom.rect.bottom-1 # Minus one (important!), because of how rects works
             return True
       elif dir == LEFT:
          if self.hasHitWall(dir):
             self.rect = self.oldRect
-            self.rect.left = self.scene.level.get((self.rect.left, self.rect.centery)).rect.left
+            self.rect.left = self.oldTiles.left.rect.left
             return True
       elif dir == RIGHT:
          if self.hasHitWall(dir):
             self.rect = self.oldRect
-            self.rect.right = self.scene.level.get((self.rect.right, self.rect.centery)).rect.right-1 # Minus one (important!), because of how rects works
+            self.rect.right = self.oldTiles.right.rect.right-1 # Minus one (important!), because of how rects works
             return True
             
       return False # We haven't changed the position of player
+   
+   def canClimb(self, dir):
+      if dir == DOWN:
+         # Check if there's ladder at bottom
+         if self.tiles.bottom.ladder: return True
+      elif dir == UP:
+         # If we we're on ladder (player top or bottom)
+         if self.oldTiles.bottom.ladder or self.oldTiles.top.ladder:
+            # and climbed onto ladder or into air
+            if self.tiles.top.ladder or not self.hasHitCeiling():
+               return True
+            elif self.hasHitCeiling():
+               # If we hit ceiling, move player as far as we can (tile's top side)
+               self.rect = self.oldRect
+               self.rect.top = self.oldTiles.top.rect.top
+               return True
+      return False
 
    def isOnCloud(self):
       """If player is on cloud return true, else return false."""
-      if self.tileBottomLeft.isCloud or self.tileBottomRight.isCloud:
+      if self.tiles.bottomLeft.isCloud or self.tiles.bottomRight.isCloud:
          if self.state != Player.JUMPING:
             return True
-         
          # If we've come down here, player is in a jump, he's falling down
          # and he's in a cloud. Check if he just entered the cloud from above
-         newTile = self.scene.level.get((self.rect.centerx, self.rect.bottom))
-         oldTile = self.scene.level.get((self.oldRect.centerx, self.oldRect.bottom))
-
-         if newTile.row > oldTile.row:
+         if self.tiles.bottom.row > self.oldTiles.bottom.row:
             return True
       return False
-
+   
    def hasHitCeiling(self):
-      return (not self.tileTopLeft.isWalkable or not self.tileTopRight.isWalkable)
+      return (not self.tiles.topLeft.isWalkable or not self.tiles.topRight.isWalkable)
       
    def hasHitWall(self, dir):
-      if dir == LEFT: return (not self.tileTopLeft.isWalkable or not self.tileBottomLeft.isWalkable or not self.tileLeft.isWalkable)
-      if dir == RIGHT: return (not self.tileTopRight.isWalkable or not self.tileBottomRight.isWalkable or not self.tileRight.isWalkable)
+      if dir == LEFT: return (not self.tiles.topLeft.isWalkable or not self.tiles.bottomLeft.isWalkable or not self.tiles.left.isWalkable)
+      if dir == RIGHT: return (not self.tiles.topRight.isWalkable or not self.tiles.bottomRight.isWalkable or not self.tiles.right.isWalkable)
    
    def hasHitGround(self):
-      return (not self.tileBottomLeft.isWalkable or not self.tileBottomRight.isWalkable)
+      return (not self.tiles.bottomLeft.isWalkable or not self.tiles.bottomRight.isWalkable)

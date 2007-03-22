@@ -5,15 +5,36 @@ Från http://lexin.nada.kth.se/cgi-bin/sve-eng:
    implicit = underförstådd, implicit, tyst, stillatigande (adjektiv)
 -->
 <map>
-   <!--
-   <property name="" value="" />
+   
+   <!--<property name="" value="" />-->
    <layer name="ladders" position="explicit">
-      <property name="" value="" />
+      <!--<property name="" value="" />-->
       <data>
-         <cell col="" row="" type="" />
+         <!--<cell col="" row="" type="" />-->
+         <cell col="11" row="8" />
+         <cell col="11" row="9" />
+         <cell col="11" row="10" />
+         <cell col="11" row="11" />
+         
+         <cell col="12" row="12" />
+         <cell col="12" row="13" />
+         <cell col="12" row="14" />
+         <cell col="12" row="15" />
+         <cell col="12" row="16" />
+
+         <cell col="17" row="16" />
+         <cell col="17" row="17" />
+         <cell col="17" row="18" />
+         <cell col="17" row="19" />
+         <cell col="17" row="20" />
+         <cell col="17" row="21" />
+
+         <cell col="7" row="18" />
+         <cell col="7" row="19" />
+         <cell col="7" row="20" />
       </data>
    </layer>
-   -->
+   
    <!-- name defaults to "normal" and position to "implicit", so really not necessary -->
    <layer name="normal" position="implicit">
       <data>
