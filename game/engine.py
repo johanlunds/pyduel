@@ -41,7 +41,7 @@ class Scene(object):
    def __init__(self, game, background = None):
       self.game = game
       self.background = pygame.Surface(self.game.screen.get_size()).convert() # Temporary
-      self.background.fill((0, 0, 0)); # Temporary
+      self.background.fill((0, 0, 0)) # Temporary
    
    def end(self, retVal):
       """Call this one if you want to end a scene."""
@@ -62,7 +62,7 @@ class Scene(object):
       while 1:
          self.game.tick()
          for event in pygame.event.get():
-            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            if event.type == QUIT:
                raise SystemExit, 0
             try:
                self.event(event)
