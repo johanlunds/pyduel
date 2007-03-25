@@ -5,10 +5,18 @@ Från http://lexin.nada.kth.se/cgi-bin/sve-eng:
    implicit = underförstådd, implicit, tyst, stillatigande (adjektiv)
 -->
 <map>
+   <layer name="items" position="explicit">
+      <data>
+         <cell col="28" row="3" />
+         <cell col="20" row="11" />
+         <cell col="23" row="17" />
+         <cell col="2" row="21" />
+      </data>
+   </layer>
    
-   <!--<property name="" value="" />-->
+   <!--<property name="" type=""></property>--> <!-- type="int/float/str/unicode/long/eval" -->
    <layer name="ladders" position="explicit">
-      <!--<property name="" value="" />-->
+      <!--<property name="" type=""></property>-->
       <data>
          <!--<cell col="" row="" type="" />-->
          <cell col="11" row="8" />

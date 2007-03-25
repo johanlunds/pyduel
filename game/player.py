@@ -27,13 +27,20 @@ class SurroundingTiles(object):
       self.right = self.getFunc((rect.right, rect.centery))
       self.top = self.getFunc((rect.centerx, rect.top))
       self.bottom = self.getFunc((rect.centerx, rect.bottom))
+      
+   def getSides(self):
+      return (self.top, self.right, self.bottom, self.left) # Return in clockwise order
    
    def setCorners(self):
       rect = self.forRect
       self.topLeft = self.getFunc((rect.left, rect.top))
       self.topRight = self.getFunc((rect.right, rect.top))
       self.bottomLeft = self.getFunc((rect.left, rect.bottom))
-      self.bottomRight = self.getFunc((rect.right, rect.bottom))   
+      self.bottomRight = self.getFunc((rect.right, rect.bottom))
+   
+   def getCorners(self):
+      # Return in clockwise order, starting with topleft (maybe should be topright)
+      return (self.topLeft, self.topRight, self.bottomRight, self.bottomLeft)
    
 class Player(pygame.sprite.Sprite):
 
@@ -64,6 +71,7 @@ class Player(pygame.sprite.Sprite):
       self.handleKeyInput(keyInput)
       self.fall()
       self.jump()
+      self.checkForItems()
 
    def move(self, xMove, yMove):
       """Move players rect and get corner tiles at new position."""
@@ -97,8 +105,7 @@ class Player(pygame.sprite.Sprite):
          self.isWalking = True
          if self.state == Player.CLIMBING:
             if self.hasHitWall(LEFT): self.rect = self.oldRect
-            # else we moved onto ground or into air (state will change in self.fall if air)
-            else: self.state = Player.STANDING
+            else: self.state = Player.JUMPING # we moved into air or onto ground
          else: # move as usual
             self.fixPosition(LEFT)
       elif keyInput[self.keyRight]:
@@ -107,8 +114,7 @@ class Player(pygame.sprite.Sprite):
          self.isWalking = True
          if self.state == Player.CLIMBING:
             if self.hasHitWall(RIGHT): self.rect = self.oldRect
-            # else we moved onto ground or into air (state will change in self.fall if air)
-            else: self.state = Player.STANDING
+            else: self.state = Player.JUMPING # we moved into air or onto ground
          else: # move as usual
             self.fixPosition(RIGHT)
             
@@ -123,9 +129,7 @@ class Player(pygame.sprite.Sprite):
          if self.canClimb(DOWN):
             self.climb()
          elif not self.fixPosition(DOWN): # Check if we've hit ground, and fix position in that case
-            # Else we're in the air
-            self.ySpeed = 0 # Start falling
-            self.state = Player.JUMPING # Force state to be JUMPING
+            self.state = Player.JUMPING # Else we're in the air
 
    def changeDirection(self):
       """Change which way the player is facing, adjust self.facing and currentFrame acordingly"""
@@ -156,6 +160,14 @@ class Player(pygame.sprite.Sprite):
       if self.rect.top > RES_HEIGHT:
          self.rect.bottom = 0 # Falled through screen so move to top of screen
    
+   def checkForItems(self):
+      """Check if player's walked on level items and run their walked on method."""
+      # could also use pygame.sprite.spritecollide(self, self.scene.level.itemTiles)
+      self.setTiles(self.rect) # Ensure surrounding tiles are up to date (but don't set self.oldTiles)
+      items = [tile.item for tile in self.tiles.getCorners() if tile.item]
+      for item in items:
+         item.walkedOn(self)
+   
    def jump(self):
       if self.state != Player.JUMPING: return
       # Player is in the air.
@@ -167,10 +179,13 @@ class Player(pygame.sprite.Sprite):
       self.move(0, self.ySpeed)
       if self.ySpeed > 0: # we're going up
          fixedPos = self.fixPosition(UP)
-         if fixedPos: self.ySpeed = 0 # we've hit a tile above us. Fall down again.
+         if fixedPos:
+            self.ySpeed = 0 # we've hit a tile above us. Fall down again.
       elif self.ySpeed < 0: # we're going down
          fixedPos = self.fixPosition(DOWN)
-         if fixedPos: self.state = Player.STANDING # We've fallen down to solid ground
+         if fixedPos:
+            self.ySpeed = 0
+            self.state = Player.STANDING # We've fallen down to solid ground
    
    def fall(self):
       """Check if we have stepped out into air."""
@@ -182,7 +197,6 @@ class Player(pygame.sprite.Sprite):
       temp = self.tiles
       self.setTiles(self.rect.inflate(0, 2))
       if not self.hasHitGround() and not self.isOnCloud():
-         self.ySpeed = 0 # We're in the air: start falling
          self.state = Player.JUMPING # Force state to be JUMPING
       self.tiles = temp # Set the real tiles again
    

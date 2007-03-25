@@ -42,9 +42,11 @@ class Duel(Scene):
       self.players.clear(self.game.screen, self.background)
       self.level.tiles.clear(self.game.screen, self.background)
       self.level.ladderTiles.clear(self.game.screen, self.background)
+      self.level.itemTiles.clear(self.game.screen, self.background)
       
       self.level.tiles.draw(self.game.screen)
       self.level.ladderTiles.draw(self.game.screen)
+      self.level.itemTiles.draw(self.game.screen)
       self.players.draw(self.game.screen)
       
       self.level.tiles.add(self.level.noneTiles)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
+import os, copy
 import xml.sax.handler
 from variables import *
 
@@ -25,6 +25,7 @@ class LevelLoader(xml.sax.handler.ContentHandler):
    def load(self, filename):
       """Open file and parse contents. Returns new level object."""
       self.level = Level(self.scene)
+      self.elementTree = [] # Used to keep track of current element and it's parents
       self.propertiesForCell = {}
       self.propertiesForLayer = {}
       self.propertiesForMap = {}
@@ -34,15 +35,11 @@ class LevelLoader(xml.sax.handler.ContentHandler):
       parser.parse(filename)
       return self.level # We have a new level
    
-   def startElement(self, name, attributesObj):
-      # Create normal dict from attribute object (http://docs.python.org/lib/attributes-objects.html)
-      attributes = {}
-      for attr, value in attributesObj.items():
-         attributes[attr] = value
-   
-      # If we have a property element later, we have to know what the property is for
-      if name in ("cell", "map", "layer"):
-         self.propertiesFor = name
+   def startElement(self, name, attributes):
+      # Remember: attributes is not dict but attribute object (see xml.sax.handler.ContentHandler docs)
+      # To convert we could use: attributes = dict(attributes.items()))
+      
+      self.elementTree.append(name)
 
       if name == "row":
          self.col = 0
@@ -51,20 +48,24 @@ class LevelLoader(xml.sax.handler.ContentHandler):
          self.position = attributes.get("position", "implicit") # if not found return 2nd arg
          if attributes["name"] == "ladders":
             self.typeDefault = Tile.ladderDefault
+         elif attributes["name"] == "items":
+            self.typeDefault = Tile.itemDefault
          else:
             self.typeDefault = Tile.default
       elif name == "cell":
-         self.cellAttributes = attributes # used when cell element ends
+         # save attributes. used when cell element ends. 
+         self.cellAttributes = copy.copy(attributes) # need to copy object (see xml.sax.handler.ContentHandler docs)
       elif name == "property":
-         # we add the property to the right dictionary
-         if self.propertiesFor == "cell":
-            self.propertiesForCell[attributes["name"]] = attributes["value"]
-         elif self.propertiesFor == "layer":
-            self.propertiesForLayer[attributes["name"]] = attributes["value"]
-         elif self.propertiesFor == "map":
-            self.propertiesForMap[attributes["name"]] = attributes["value"]
+         # convert from possible unicode str
+         self.propertyName = attributes["name"]
+         self.propertyType = attributes.get("type", "int") # defaults to int (change to str?)
+         if self.propertyType not in ("int", "float", "long", "str", "unicode", "eval"): # allowed types
+            # we haven't got valid value, raise exception with msg and exit
+            raise StandardError, 'Element "property" has attribute "type" with invalid value.'
 
    def endElement(self, name): # called at end of element (<element /> or <element></element>)
+      self.elementTree.pop() # remove last item
+   
       if name == "map":
          self.level.loaded()
       elif name == "row":
@@ -78,17 +79,29 @@ class LevelLoader(xml.sax.handler.ContentHandler):
          else: # default
             cords = (self.col, self.row)
             
-         type = int(self.cellAttributes.pop("type", self.typeDefault)) # Get and remove, or return 2nd arg
+         type = int(self.cellAttributes.get("type", self.typeDefault)) # Get and remove, or return 2nd arg
          self.level.add(cords, type, self.propertiesForCell)
          
          self.col += 1 # after we've added the tile
          self.propertiesForCell = {} # reset
-
-#    This method is not used right now.
-#       
-#    def characters(self, content):
-#       # Content may be a Unicode-string
-#       pass
+      
+   def characters(self, content):
+      # Only used for property-elements right now
+      
+      if self.elementTree[-1] != "property": return # we're not in a property-element
+      propertyFor = self.elementTree[-2] # second to last (-1 is the last)
+      
+      key = str(self.propertyName) # can be unicode wich don't work with keyword arguments
+      # convert to right type. possible values: see self.startElement() for "property"
+      value = eval(self.propertyType)(content)
+      
+      # we add the property to the right dictionary
+      if propertyFor == "cell":
+         self.propertiesForCell[key] = value
+      elif propertyFor == "layer":
+         self.propertiesForLayer[key] = value
+      elif propertyFor == "map":
+         self.propertiesForMap[key] = value
 
 class Level(object):
    """Level class for levels in the game."""
@@ -101,6 +114,7 @@ class Level(object):
       self.backgroundTiles = pygame.sprite.Group()
       self.cloudTiles = pygame.sprite.Group()
       self.ladderTiles = pygame.sprite.Group()
+      self.itemTiles = pygame.sprite.Group()
 
    def draw(self, screen):
       # First we remove all none tiles from self.tiles.
@@ -110,6 +124,7 @@ class Level(object):
       self.tiles.add(self.noneTiles) # add them again
       
       self.ladderTiles.draw(screen) # because is not in "normal" layer
+      self.itemTiles.draw(screen)
       
    def getPixelsFromCords(self, cords):
       """Returns X and Y position calculated from column and row position."""
@@ -123,11 +138,14 @@ class Level(object):
    
    def loaded(self):
       """Level has been loaded into Level-object."""
-      # All ladder tiles becomes a property
+      # All tiles becomes a property
       # of the correct tile in self.tiles (col and row is compared)
       for ladder in self.ladderTiles:
          tile = self.get((ladder.col, ladder.row), True)
          tile.ladder = ladder
+      for item in self.itemTiles:
+         tile = self.get((item.col, item.row), True)
+         tile.item = item
        
    def get(self, pos, isCords=False):
       """Returns tile at specified x and y (or column and row) position in map."""
@@ -143,7 +161,7 @@ class Level(object):
       except KeyError:
          # If there's no tile at the coordinates (outside of screen for example)
          # then return dummy-tile (prevents errors)      
-         return NoneTile(cords)
+         return NoneTile(self, cords)
    
    def add(self, cords, type, otherTileArgs):
       """Add a new tile to map."""
@@ -154,7 +172,7 @@ class Level(object):
       tileClass = eval("%sTile" % (tileClass, )) # Get tile class
       tileArgs.update(otherTileArgs) # add (and overwrite) key/value pairs
       
-      tile = tileClass(cords, **tileArgs)
+      tile = tileClass(self, cords, **tileArgs)
       
       if tile.__class__ is NoneTile:
          self.noneTiles.add(tile)
@@ -165,6 +183,9 @@ class Level(object):
       elif tile.__class__ is LadderTile:
          self.ladderTiles.add(tile)
          return # We don't want to add to self.tiles
+      elif tile.__class__ is ItemTile or issubclass(tile.__class__, ItemTile):
+         self.itemTiles.add(tile)
+         return
       
       self.tiles.add(tile)
       self.tilesArray[cords] = tile # used to find tiles based on pos in self.get()
