@@ -16,7 +16,8 @@ class LevelLoader(xml.sax.handler.ContentHandler):
 
    # List all available levels with absolute paths
    # The list is sorted, so just use next item in list to load next level
-   levels = filter(os.path.isfile, [os.path.join(DIR_LEVELS, entry) for entry in os.listdir(DIR_LEVELS)])
+   levels = [os.path.join(DIR_LEVELS, entry) for entry in os.listdir(DIR_LEVELS) if os.path.isfile(os.path.join(DIR_LEVELS, entry))]
+   levels.sort()
 
    def __init__(self, scene):
       self.scene = scene
