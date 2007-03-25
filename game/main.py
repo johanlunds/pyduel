@@ -28,12 +28,13 @@ class Duel(Scene):
       self.level = self.levelLoader.load(self.levelLoader.__class__.levels[levelNumber]) # use level list from level loader's class
    
    def event(self, event):
-      pass
+      if event.type == KEYDOWN and event.key == K_ESCAPE:
+         self.end(0)
+
 
    def loop(self):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
-      if keyInput[K_ESCAPE]: self.end(0)
       self.players.update(keyInput)
    
    def update(self):
@@ -122,11 +123,11 @@ class Menu(Scene):
       #check for enter and do action (currently only for main-menu)
       if event.type == KEYDOWN and event.key == K_RETURN:
          if self.selection == 0:
-            self.end(0)
+            self.runScene(Duel(self.game))
          if self.selection == 1:
             pass
          if self.selection == 2:
-            raise SystemExit, 0
+            self.end(0)
    
    def update(self):
       #Erease textlines.rect and blit active or inactive-colored text onto screen.
@@ -150,11 +151,8 @@ class Menu(Scene):
 
 def main():
    pyduel = Game(RESOLUTION, CAPTION, ICON)
-   menu = Menu(pyduel,("New Game","Options","Quit"))
-   firstScene = Duel(pyduel)
-   while 1:
-      pyduel.start(menu)
-      pyduel.start(firstScene) # Start the game with a new Duel scene
+   firstScene = Menu(pyduel,("New Game","Options","Quit"))
+   pyduel.start(firstScene)
    raise SystemExit, 0
 
 if __name__ == "__main__":
