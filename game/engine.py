@@ -55,10 +55,8 @@ class Scene(object):
       return retVal
    
    def run(self):
-      self.game.screen.blit(self.background, (0, 0))
       self.draw()
-      pygame.display.flip()
-      
+      pygame.display.flip()      
       while 1:
          self.game.tick()
          for event in pygame.event.get():
@@ -89,4 +87,5 @@ class Scene(object):
    
    def draw(self):
       """Called before the loop starts in the scene. Supposed to draw whole scene. Calls self.update() by default."""
+      self.game.screen.blit(self.background, (0, 0))
       self.update()

@@ -47,7 +47,7 @@ class Player(pygame.sprite.Sprite):
    JUMPSPEED = 14 # Speed at start of jump
    SPEED = 4 # Walking speed
    STANDING, JUMPING, CLIMBING = range(3) # States of player
-   ANIMATIONSPEED = 15
+   ANIMATIONSPEED = 7 # the speed is inverted (lower value=faster)
    FRAMES = 4
    SIZE = (18,36) 
 
