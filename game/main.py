@@ -6,6 +6,7 @@ from engine import Game, Scene
 from level import LevelLoader
 from player import Player
 from variables import *
+from menu import Menu
 
 import pygame
 from pygame.locals import *
@@ -57,105 +58,72 @@ class Duel(Scene):
       self.level.draw(self.game.screen)
       self.players.draw(self.game.screen)
 
-class Menu(Scene):
-   """menu class, atm just for the main menu. I'll add options menu later"""   
-   def __init__(self, game, lines):
+
+class MainMenu(Scene):
+   def __init__(self, game,lines):
       Scene.__init__(self, game)
-      self.ammount = len(lines)
-      self.selection = 0
-      
-      self.fonts = {}
-      self.fonts["big"] = pygame.font.Font(os.path.join(DIR_FONT, "por2.ttf"), 72)
-      self.fonts["medium"] = pygame.font.Font(os.path.join(DIR_FONT, "por2.ttf"), 40)
-      self.fonts["small"] = pygame.font.Font(os.path.join(DIR_FONT, "por2.ttf"), 18)
-      
-      self.separator = pygame.Surface((RES_WIDTH, 5)).convert()
-      self.separator.fill((255,215,0))
+      self.menu = Menu(lines)
 
-      self.levelLoader = LevelLoader(self)
-      self.loadLevel(0)
-      
-      self.header = {}
-      self.header["py"] = self.text(self.fonts["big"], "Py",(255,215,0))
-      self.header["duel"] = self.text(self.fonts["big"], "Duel",(255,255,255))
-      self.header["py"].rect.right = 0
-      self.header["duel"].rect.left = RES_WIDTH
-      self.header["py"].rect.top = 10
-      self.header["duel"].rect.top = 10
-      
-      # Add text objects into containing lists
-      self.textlinesInactive = []
-      self.textlinesActive = []
-      for line in lines:
-         self.textlinesInactive.append(self.text(self.fonts["medium"], line,(255,255,255)))
-         self.textlinesActive.append(self.text(self.fonts["medium"], line,(255,215,0)))
-      
-      # Place the text options in the right position
-      for i in range(self.ammount):
-         self.textlinesInactive[i].rect.centerx = RES_WIDTH/2
-         self.textlinesInactive[i].rect.y = 100 + i * 50
-         self.textlinesActive[i].rect.centerx = RES_WIDTH/2
-         self.textlinesActive[i].rect.y = 100 + i * 50
-         
-   def loadLevel(self, levelNumber):
-      self.levelNumber = levelNumber
-      self.level = self.levelLoader.load(self.levelLoader.__class__.levels[levelNumber]) # use level list from level loader's class
-
-   class text (object):
-      """used to get text objects with a surface and a rect"""
-      def __init__(self, font, text, color):
-         self.surface = font.render(text, True, color)
-         self.rect = self.surface.get_rect()
-     
    def loop(self):
-      # Put moves here, used for the headers slide-in now.
-      if  self.header["py"].rect.right + 15 < self.header["duel"].rect.left:
-         self.header["py"].rect.left += 5
-         self.header["duel"].rect.left -= 7
+      self.menu.headerSlide()
       
-   def event(self, event):
-      # Escape pressed => Exit.
-      if event.type == KEYDOWN and event.key == K_ESCAPE:
-         self.end(0)
-      # Check for keyp up/down and set new selection
-      if event.type == KEYDOWN and event.key == K_DOWN:
-         if (self.selection < self.ammount-1):
-            self.selection += 1
+   def event(self, event):      
+      if event.type == KEYDOWN and event.key == K_ESCAPE: # Escape pressed => Exit.
+         self.end(0)   
+      if event.type == KEYDOWN and event.key == K_DOWN:  # Check for keyp up/down and set new selection
+         if (self.menu.selection < self.menu.ammount-1):
+            self.menu.selection += 1
       if event.type == KEYDOWN and event.key == K_UP:
-         if (self.selection > 0):
-            self.selection += -1
-      # Check for enter and do action (currently only for main-menu)
-      if event.type == KEYDOWN and event.key == K_RETURN:
-         if self.selection == 0:
+         if (self.menu.selection > 0):
+            self.menu.selection += -1 
+      if event.type == KEYDOWN and event.key == K_RETURN: # Check for enter and do action
+         if self.menu.selection == 0:
             self.runScene(Duel(self.game))
-         if self.selection == 1:
-            pass
-         if self.selection == 2:
+         if self.menu.selection == 1:
+            self.runScene(OptionsMenu(self.game, ("Timelimit: ", "Option 2", "Back")))
+         if self.menu.selection == 2:
             self.end(0)
    
    def update(self):
-      # Erease textlines.rect and blit active or inactive-colored text onto screen.
-      for i in range(self.ammount):
-         self.game.screen.blit(self.background, self.textlinesActive[i].rect, self.textlinesActive[i].rect)
-         if i==self.selection:
-            self.game.screen.blit(self.textlinesActive[i].surface,self.textlinesActive[i].rect)
-         else:
-            self.game.screen.blit(self.textlinesInactive[i].surface,self.textlinesInactive[i].rect)
-      
-      # Erease and blit header (inflate beacuse of moving), lines and level.
-      for header in self.header.values():
-         self.game.screen.blit(self.background, header.rect.inflate(15,0), header.rect.inflate(15,0))
-         self.game.screen.blit(header.surface, header.rect)
-         
-      self.game.screen.blit(self.separator,(0,80))
-      self.level.tiles.remove(self.level.noneTiles)
-      self.level.tiles.clear(self.game.screen, self.background)
-      self.level.tiles.add(self.level.noneTiles)
-      self.level.draw(self.game.screen) 
+      self.menu.update(self.game.screen, self.background)
+
+class OptionsMenu(Scene):
+   def __init__(self, game, lines):
+      Scene.__init__(self, game)
+      self.timelimit = 0
+      self.menu = Menu(lines)
+   
+   def event(self, event):
+      if event.type == KEYDOWN and event.key == K_ESCAPE:  # Escape pressed => End scene.
+         self.end(0)    
+      if event.type == KEYDOWN and event.key == K_DOWN: # Check for keyp up/down and set new selection
+         if (self.menu.selection < self.menu.ammount-1):
+            self.menu.selection += 1
+      if event.type == KEYDOWN and event.key == K_UP:
+         if (self.menu.selection > 0):
+            self.menu.selection += -1
+      if event.type == KEYDOWN and event.key == K_RETURN:  # Check for enter and do action
+         if self.menu.selection == 0:
+            self.timelimit += 1
+            self.menu.textlinesInactive[0].setString("Timelimit: %d" % self.timelimit) 
+            self.menu.textlinesActive[0].setString("Timelimit: %d" % self.timelimit) 
+         if self.menu.selection == 1:
+            pass
+         if self.menu.selection == 2:
+            self.end(0)
+   
+   def loop(self):
+      self.menu.headerSlide()
+
+   def update(self):
+      self.menu.update(self.game.screen, self.background)
+
+   def saveOptions(self):
+      pass
 
 def main():
    pyduel = Game(RESOLUTION, CAPTION, ICON)
-   firstScene = Menu(pyduel,("New Game","Options","Quit"))
+   firstScene = MainMenu(pyduel,("New Game","Options","Quit"))
    pyduel.start(firstScene)
    raise SystemExit, 0
 
