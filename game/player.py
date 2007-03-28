@@ -47,31 +47,35 @@ class Player(pygame.sprite.Sprite):
    JUMPSPEED = 14 # Speed at start of jump
    SPEED = 4 # Walking speed
    STANDING, JUMPING, CLIMBING = range(3) # States of player
-   ANIMATIONSPEED = 7 # the speed is inverted (lower value=faster)
-   FRAMES = 4
-   SIZE = (18,36) 
+   
+   # Animation
+   A_SPEED = 7 # the speed is inverted (lower value = faster)
+   A_FRAMES = 4 # Number of frames
+   A_RIGHT = 0 # The frame for facing left
+   A_LEFT = 4 # and right
 
    def __init__(self, scene, image, keys):
       pygame.sprite.Sprite.__init__(self)
       
       self.scene = scene
-      self.animation = Animation(image, Player.SIZE, Player.FRAMES)
-      self.image = self.animation.getCurrentFrame()
-      self.rect = self.image.get_rect()
+      
+      self.animation = Animation(self)
+      self.image, self.rect = self.animation.loadFrames(image, Player.A_FRAMES, flipX=True)
+      walkLeft = zip(range(Player.A_FRAMES, 2*Player.A_FRAMES), Player.A_FRAMES*(Player.A_SPEED, ))
+      walkRight = zip(range(Player.A_FRAMES), Player.A_FRAMES*(Player.A_SPEED, ))
+      self.animation.addSequence("walkLeft", walkLeft, True) # 3rd arg is for repeat
+      self.animation.addSequence("walkRight", walkRight, True)
+      
       self.keyLeft, self.keyRight, self.keyUp, self.keyDown, self.keyJump = self.keys = keys
       self.xSpeed, self.ySpeed = (Player.SPEED, Player.SPEED) # xSpeed right = positive; ySpeed up = positive
       self.state = Player.JUMPING # Maybe change to STANDING later, but player begins in air right now
-      self.isWalking = False
-      self.facing = RIGHT
-      self.frameCounter = 0
       
    def update(self, keyInput):
-      self.frameCounter += 1
-      if self.frameCounter % Player.ANIMATIONSPEED == 0: self.changeFrame()
       self.handleKeyInput(keyInput)
       self.fall()
       self.jump()
       self.checkForItems()
+      self.animation.update()
 
    def move(self, xMove, yMove):
       """Move players rect and get corner tiles at new position."""
@@ -93,25 +97,32 @@ class Player(pygame.sprite.Sprite):
       
    def handleKeyInput(self, keyInput):
       """Handles the different keys pressed on the keyboard."""
-      self.isWalking = False
+      self.animation.pause() # To make us stand still if we haven't any keys pressed
       
       if keyInput[self.keyJump] and self.state not in (Player.JUMPING, Player.CLIMBING):
+         self.animation.stop()
+         self.image = self.animation.getDefaultImage()
+         
          self.state = Player.JUMPING
          self.ySpeed = Player.JUMPSPEED
       
       if keyInput[self.keyLeft]:
+         self.animation.defaultFrame = Player.A_LEFT # A bit of a hack to make us face the right direction when climbing etc
+         if self.animation.getCurrent()[0] == "walkLeft": self.animation.unpause() # if already animating walking right: continue
+         else: self.animation.start("walkLeft")
+         
          self.move(-self.xSpeed, 0)
-         if self.facing == RIGHT: self.changeDirection()
-         self.isWalking = True
          if self.state == Player.CLIMBING:
             if self.hasHitWall(LEFT): self.rect = self.oldRect
             else: self.state = Player.JUMPING # we moved into air or onto ground
          else: # move as usual
             self.fixPosition(LEFT)
       elif keyInput[self.keyRight]:
+         self.animation.defaultFrame = Player.A_RIGHT # A bit of a hack to make us face the right direction when climbing etc
+         if self.animation.getCurrent()[0] == "walkRight": self.animation.unpause() # if already animating walking left: continue
+         else: self.animation.start("walkRight")
+         
          self.move(self.xSpeed, 0)
-         if self.facing == LEFT: self.changeDirection()
-         self.isWalking = True
          if self.state == Player.CLIMBING:
             if self.hasHitWall(RIGHT): self.rect = self.oldRect
             else: self.state = Player.JUMPING # we moved into air or onto ground
@@ -131,26 +142,6 @@ class Player(pygame.sprite.Sprite):
          elif not self.fixPosition(DOWN): # Check if we've hit ground, and fix position in that case
             self.state = Player.JUMPING # Else we're in the air
 
-   def changeDirection(self):
-      """Change which way the player is facing, adjust self.facing and currentFrame acordingly"""
-      if self.facing == LEFT:
-         self.animation.currentFrame = 0
-         self.facing = RIGHT
-      elif self.facing == RIGHT:
-         self.animation.currentFrame = Player.FRAMES*2 - 1
-         self.facing = LEFT
-      self.changeFrame()
-
-   def changeFrame(self):
-      """Go to the next frame if we are walking, go to first if we passed the last or if we aren't walking. note that the frames facing left are mirrored, therefor we do -1 instead of +1"""  
-      if self.facing  == RIGHT:
-         if self.isWalking is True: self.animation.currentFrame += 1
-         if self.animation.currentFrame == Player.FRAMES or self.isWalking == False: self.animation.currentFrame = 0
-      elif self.facing == LEFT:
-         if self.isWalking is True: self.animation.currentFrame += -1
-         if self.animation.currentFrame == Player.FRAMES - 1 or self.isWalking == False: self.animation.currentFrame = Player.FRAMES*2 - 1
-      self.image = self.animation.getCurrentFrame()   
-         
    def checkOuterBounds(self):
       # Player cant go outside the screens sides, but can jump over top
       if self.rect.right < 0:
@@ -203,6 +194,8 @@ class Player(pygame.sprite.Sprite):
    def climb(self):
       self.state = Player.CLIMBING
       self.rect.centerx = self.tiles.center.rect.centerx # center player on X-axis in tile
+      self.animation.stop()
+      self.image = self.animation.getDefaultImage()
    
    def fixPosition(self, dir):
       """Check position of player at chosen direction and fix if we've hit something.

@@ -17,8 +17,8 @@ class Duel(Scene):
    def __init__(self, game):
       Scene.__init__(self, game)
      
-      playerOne = Player(self, "player-red.png", (K_a, K_d, K_w, K_s, K_SPACE))
-      playerTwo = Player(self, "player-blue.png", (K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN))
+      playerOne = Player(self, loadImgPng("player-red.png"), (K_a, K_d, K_w, K_s, K_SPACE))
+      playerTwo = Player(self, loadImgPng("player-blue.png"), (K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
       self.levelLoader = LevelLoader(self)
