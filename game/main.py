@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+from shutil import copy 
 from engine import Game, Scene
 from level import LevelLoader
 from player import Player
 from variables import *
-from menu import Menu
+from menu import *
 
 import pygame
 from pygame.locals import *
@@ -16,9 +17,10 @@ class Duel(Scene):
    
    def __init__(self, game):
       Scene.__init__(self, game)
-     
-      playerOne = Player(self, loadImgPng("player-red.png"), (K_a, K_d, K_w, K_s, K_SPACE))
-      playerTwo = Player(self, loadImgPng("player-blue.png"), (K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN))
+      playerOneOptions = game.options.playerOne  
+      playerTwoOptions = game.options.playerTwo
+      playerOne = Player(self, loadImgPng(playerOneOptions["image"]), playerOneOptions["keys"], (0,0))
+      playerTwo = Player(self, loadImgPng(playerTwoOptions["image"]), playerTwoOptions["keys"], (RES_WIDTH-40,0))
       
       self.players = pygame.sprite.Group(playerTwo, playerOne)
       self.levelLoader = LevelLoader(self)
@@ -70,17 +72,15 @@ class MainMenu(Scene):
    def event(self, event):      
       if event.type == KEYDOWN and event.key == K_ESCAPE: # Escape pressed => Exit.
          self.end(0)   
-      if event.type == KEYDOWN and event.key == K_DOWN:  # Check for keyp up/down and set new selection
-         if (self.menu.selection < self.menu.ammount-1):
-            self.menu.selection += 1
-      if event.type == KEYDOWN and event.key == K_UP:
-         if (self.menu.selection > 0):
-            self.menu.selection += -1 
+      if event.type == KEYDOWN and event.key == K_DOWN: self.menu.selection += 1
+      if (self.menu.selection < 0): self.menu.selection = self.menu.ammount-1
+      if event.type == KEYDOWN and event.key == K_UP: self.menu.selection += -1
+      if (self.menu.selection > self.menu.ammount-1): self.menu.selection = 0
       if event.type == KEYDOWN and event.key == K_RETURN: # Check for enter and do action
          if self.menu.selection == 0:
             self.runScene(Duel(self.game))
          if self.menu.selection == 1:
-            self.runScene(OptionsMenu(self.game, ("Timelimit: ", "Option 2", "Back")))
+            self.runScene(OptionsMenu(self.game))
          if self.menu.selection == 2:
             self.end(0)
    
@@ -88,30 +88,101 @@ class MainMenu(Scene):
       self.menu.update(self.game.screen, self.background)
 
 class OptionsMenu(Scene):
-   def __init__(self, game, lines):
+   """Options menu, everything but players is working. code is huge and ugly though. ;o"""
+   def __init__(self, game):
       Scene.__init__(self, game)
-      self.timelimit = 0
-      self.menu = Menu(lines)
+      self.game = game
+      self.options = self.game.optionHandler.options  
+      lines = []
+      if self.options.system["fullscreen"]: lines.append("Fullscreen: %s" % "Yes") 
+      else: lines.append("Fullscreen: %s" % "No") 
+      if self.options.system["sound"]: lines.append("Sound: %s" % "Yes" )
+      else: lines.append("Sound: %s" % "No" )
+      if self.options.system["music"]: lines.append("Music: %s" % "Yes")
+      else: lines.append("Music: %s" % "No")
+      lines.append("Level: %s" % self.options.game["level"])
+      lines.append("Timelimit: %s" % self.options.game["time"])
+      lines.append("Lives: %s" % self.options.game["lives"])     
+      lines.append("Player 1")
+      lines.append("Player 2")
+      lines.append("Reset All")
+      lines.append("Back")
+
+      self.menu = Menu(lines, True)
    
    def event(self, event):
       if event.type == KEYDOWN and event.key == K_ESCAPE:  # Escape pressed => End scene.
-         self.end(0)    
-      if event.type == KEYDOWN and event.key == K_DOWN: # Check for keyp up/down and set new selection
-         if (self.menu.selection < self.menu.ammount-1):
-            self.menu.selection += 1
-      if event.type == KEYDOWN and event.key == K_UP:
-         if (self.menu.selection > 0):
-            self.menu.selection += -1
-      if event.type == KEYDOWN and event.key == K_RETURN:  # Check for enter and do action
-         if self.menu.selection == 0:
-            self.timelimit += 1
-            self.menu.textlinesInactive[0].setString("Timelimit: %d" % self.timelimit) 
-            self.menu.textlinesActive[0].setString("Timelimit: %d" % self.timelimit) 
-         if self.menu.selection == 1:
+         self.end(0)
+      # Check for keyp up/down and set new selection    
+      if event.type == KEYDOWN and event.key == K_DOWN: self.menu.selection += 1
+      if (self.menu.selection < 0): self.menu.selection = self.menu.ammount-1
+      if event.type == KEYDOWN and event.key == K_UP: self.menu.selection += -1
+      if (self.menu.selection > self.menu.ammount-1): self.menu.selection = 0
+      
+      if event.type == KEYDOWN and (event.key == K_RIGHT or event.key == K_LEFT or event.key == K_RETURN):
+         if self.menu.selection == 0: #fullscreen
+            if self.options.system["fullscreen"]:
+               self.options.system["fullscreen"] = False
+               self.menu.setLine(0, "Fullscreen: %s" % "No")
+               self.game.toggleFullscreen()
+            else: 
+               self.options.system["fullscreen"] = True
+               self.menu.setLine(0, "Fullscreen: %s" % "Yes")
+               self.game.toggleFullscreen()
+         if self.menu.selection == 1: #sound
+            if self.options.system["sound"]:
+               self.options.system["sound"] = False
+               self.menu.setLine(1, "Sound: %s" % "No")
+            else: 
+               self.options.system["sound"] = True
+               self.menu.setLine(1, "Sound: %s" % "Yes")
+         if self.menu.selection == 2: #music
+            if self.options.system["music"]: 
+               self.options.system["music"] = False
+               self.menu.setLine(2, "Music: %s" % "No")
+            else:
+               self.options.system["music"] = True
+               self.menu.setLine(2, "Music: %s" % "Yes")
+      
+      if event.type == KEYDOWN and (event.key == K_RIGHT or event.key == K_RETURN):
+         if self.menu.selection == 3: #level
+            if self.options.game["level"] < len(LevelLoader.levels)-1: self.options.game["level"] += 1
+            self.menu.setLine(3, "Level: %s" % self.options.game["level"])
+         if self.menu.selection == 4: #time
+            if self.options.game["time"] < 60: self.options.game["time"] += 1
+            self.menu.setLine(4, "Timelimit: %s" % self.options.game["time"])
+         if self.menu.selection == 5: #lives
+            if self.options.game["time"] < 50: self.options.game["lives"] += 1
+            self.menu.setLine(5, "Lives: %s" % self.options.game["lives"])
+ 
+
+      if event.type == KEYDOWN and event.key == K_LEFT:
+         if self.menu.selection == 3: #level
+            if self.options.game["level"] > 1: self.options.game["level"] += -1
+            self.menu.setLine(3, "Level: %s" % self.options.game["level"])
+         if self.menu.selection == 4: #time
+            if self.options.game["time"] > 1: self.options.game["time"] += -1
+            self.menu.setLine(4, "Timelimit: %s" % self.options.game["time"])
+         if self.menu.selection == 5: #lives
+            if self.options.game["lives"] > 1: self.options.game["lives"] += -1
+            self.menu.setLine(5, "Lives: %s" % self.options.game["lives"])
+
+      if event.type == KEYDOWN and event.key == K_RETURN:
+         if self.menu.selection == 6: #player one
             pass
-         if self.menu.selection == 2:
+         if self.menu.selection == 7: #player two
+            pass
+         if self.menu.selection == 8: #reset
+            fullscreen = self.options.system["fullscreen"]
+            copy("options-default.xml", "options.xml")
+            self.game.optionHandler = OptionsHandler("options.xml")
+            if self.game.optionHandler.options.system["fullscreen"] == False and fullscreen: self.game.toggleFullscreen()
+            elif fullscreen == False and self.game.optionHandler.options.system["fullscreen"]: self.game.toggleFullscreen()
             self.end(0)
-   
+         if self.menu.selection == 9: #back
+            self.game.optionHandler.writeXML()
+            self.end(0)
+
    def loop(self):
       self.menu.headerSlide()
 

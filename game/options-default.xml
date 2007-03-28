@@ -9,7 +9,7 @@
    <game>
       <option name="level" type="int">1</option>
       <option name="lives" type="int">10</option>
-      <option name="time" type="int">14</option>
+      <option name="time" type="int">10</option>
    </game>
    <playerOne>
       <option name="name">Player 1</option>

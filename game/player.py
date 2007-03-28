@@ -54,13 +54,14 @@ class Player(pygame.sprite.Sprite):
    A_RIGHT = 0 # The frame for facing left
    A_LEFT = 4 # and right
 
-   def __init__(self, scene, image, keys):
+   def __init__(self, scene, image, keys, position):
       pygame.sprite.Sprite.__init__(self)
       
       self.scene = scene
       
       self.animation = Animation(self)
       self.image, self.rect = self.animation.loadFrames(image, Player.A_FRAMES, flipX=True)
+      self.rect.x, self.rect.y = position
       walkLeft = zip(range(Player.A_FRAMES, 2*Player.A_FRAMES), Player.A_FRAMES*(Player.A_SPEED, ))
       walkRight = zip(range(Player.A_FRAMES), Player.A_FRAMES*(Player.A_SPEED, ))
       self.animation.addSequence("walkLeft", walkLeft, True) # 3rd arg is for repeat
