@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <options>
-<option key="p1_left" value="K_LEFT" />
    <system>
-      <fullscreen>True</fullscreen>
-      <sound>True</sound>
-      <music>True</music>
+      <option name="fullscreen">True</option>
+      <option name="sound">True</option>
+      <option name="music">True</option>
    </system>   
    <game>
-      <levelfile>1.xml</levelfile>
-      <liveslimit>10</liveslimit>
-      <timelimit>10</timelimit>
+      <option name="levelfile">1.xml</option>
+      <option name="liveslimit">10</option>
+      <option name="timelimit">10</option>
    </game>
-   <player>
-      <number>1</number>
-      <name>Player 1</name>
-      <image>player-red.png</image>
-      <controls>
-         <left>K_LEFT</left>
-         <right>K_RIGHT</right>
-         <up>K_UP</up>
-         <down>K_DOWN</down>
-         <shoot>K_RETURN</shoot>
-      </controls>
-   </player>
+   <playerOne>
+      <option name="name">Player 1</option>
+      <option name="image">player-red.png</option>
+      <option name="left">K_LEFT</option>
+      <option name="right">K_RIGHT</option>
+      <option name="up">K_UP</option>
+      <option name="down">K_DOWN</option>
+      <option name="jump">K_SPACE</option>
+   </playerOne>
+   <playerTwo>
+      <option name="name">Player 2</option>
+      <option name="image">player-blue.png</option>
+      <option name="left">K_A</option>
+      <option name="right">K_D</option>
+      <option name="up">K_W</option>
+      <option name="down">K_S</option>
+      <option name="jump">K_TAB</option>
+   </playerTwo>
 </options>
