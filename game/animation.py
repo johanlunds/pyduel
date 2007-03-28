@@ -112,12 +112,12 @@ class Animation(object):
       frameNum, duration = frames[self.seqFrame] # frameNum = an index in self.frames
       self.resource.image = self.frames[frameNum] # The real magic: change animation owners image
       
-      self.counter += 1
+      self.counter += 1 # Increase frame counter
       if self.counter >= duration: # change to next frame
          self.seqFrame += 1
          if self.seqFrame < len(frames): # not end of sequence
             self.counter = 0
-         else:
+         else: # start new sequence
             if repeat: self.start(self.current) # repeat current sequence
             else: self.next()
       
