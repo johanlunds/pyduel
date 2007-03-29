@@ -54,11 +54,14 @@ class Player(pygame.sprite.Sprite):
    A_RIGHT = 0 # The frame for facing left
    A_LEFT = 4 # and right
 
-   def __init__(self, scene, image, keys, position):
+   def __init__(self, scene, options, position):
       pygame.sprite.Sprite.__init__(self)
       
       self.scene = scene
       
+      image = loadImgPng(options["image"])
+      keys = options["left"], options["right"], options["up"], options["down"], options["jump"]
+
       self.animation = Animation(self)
       self.image, self.rect = self.animation.loadFrames(image, Player.A_FRAMES, flipX=True)
       self.rect.x, self.rect.y = position

@@ -11,7 +11,7 @@ from variables import *
 
 class Menu(object):
    """menu class, used by diffrent menus"""
-   def __init__(self, lines, useSmallFont = False):   
+   def __init__(self, header, lines, useSmallFont = False):   
       self.ammount = len(lines)
       self.selection = 0
       # Load fonts
@@ -28,12 +28,13 @@ class Menu(object):
       
       # Load and position header (pyduel)
       self.header = {}
-      self.header["py"] = self.text(self.fonts["big"], "Py",(255,215,0))
-      self.header["duel"] = self.text(self.fonts["big"], "Duel",(255,255,255))
-      self.header["py"].rect.right = 0
-      self.header["duel"].rect.left = RES_WIDTH
-      self.header["py"].rect.top = 10
-      self.header["duel"].rect.top = 10
+      headerPartOne, headerPartTwo = header
+      self.header[1] = self.text(self.fonts["big"], headerPartOne,(255,215,0))
+      self.header[2] = self.text(self.fonts["big"], headerPartTwo,(255,255,255))
+      self.header[1].rect.right = 0
+      self.header[2].rect.left = RES_WIDTH
+      self.header[1].rect.top = 10
+      self.header[2].rect.top = 10
       
       # Add text objects into containing lists
       self.textlinesInactive = []
@@ -74,9 +75,9 @@ class Menu(object):
          """Get a surface for a new string, inflate the rect if its bigger"""
          self.string = string
          self.surface = self.font.render(self.string , True, self.color)
-         widthChange = self.surface.get_rect().width - self.rect.width
-         if widthChange > 0:
-            self.rect.inflate_ip(widthChange, 0)
+         self.rect.width = self.surface.get_rect().width
+         self.rect.centerx = RES_WIDTH / 2
+
 
       def setColor(self, color):
          """Change the color, currently not used."""
@@ -85,14 +86,14 @@ class Menu(object):
 
    def headerSlide(self):
       """Slide in the parts of the header untill they meet."""
-      if  self.header["py"].rect.right + 15 < self.header["duel"].rect.left:
-         self.header["py"].rect.left += 5
-         self.header["duel"].rect.left -= 7
+      distanceFromCenter = (self.header[1].rect.width + self.header[2].rect.width) / 2
+      if self.header[1].rect.left + distanceFromCenter + 7 < (RES_WIDTH / 2): self.header[1].rect.left += 7
+      if self.header[2].rect.right - distanceFromCenter - 7 > (RES_WIDTH / 2): self.header[2].rect.left += -7
 
    def update(self, screen, background):
       # Erease textlines.rect and blit active or inactive-colored text onto screen.
+      screen.blit(background, (0,0))
       for i in range(self.ammount):
-         screen.blit(background, self.textlinesActive[i].rect, self.textlinesActive[i].rect)
          if i==self.selection:
             screen.blit(self.textlinesActive[i].surface,self.textlinesActive[i].rect)
          else:
@@ -100,13 +101,9 @@ class Menu(object):
       
       # Erease and blit header (inflate beacuse of moving), lines and level.
       for header in self.header.values():
-         screen.blit(background, header.rect.inflate(15,0), header.rect.inflate(15,0))
          screen.blit(header.surface, header.rect)
          
       screen.blit(self.separator,(0,80))
-      self.level.tiles.remove(self.level.noneTiles)
-      self.level.tiles.clear(screen, background)
-      self.level.tiles.add(self.level.noneTiles)
       self.level.draw(screen)
 
 class Options(object):
@@ -155,9 +152,9 @@ class OptionsHandler(xml.sax.handler.ContentHandler):
                self.options.playerTwo[key] = value         
 
    def endElement(self, name): # called at end of element (<element /> or <element></element>)
-      if self.elementTree[-1] == "options":
-         self.options.playerOne["keys"] = (eval(self.options.playerOne["left"]), eval(self.options.playerOne["right"]), eval(self.options.playerOne["up"]), eval(self.options.playerOne["down"]), eval(self.options.playerOne["jump"]))
-         self.options.playerTwo["keys"] = (eval(self.options.playerTwo["left"]), eval(self.options.playerTwo["right"]), eval(self.options.playerTwo["up"]), eval(self.options.playerTwo["down"]), eval(self.options.playerTwo["jump"]))    
+      #if self.elementTree[-1] == "options":
+      #   for player in self.options.playerOne, self.options.playerTwo:
+      #      player["keys"] = (player["left"], player["right"], player["up"], player["down"], player["jump"])
       self.elementTree.pop() # remove last item
 
    def writeXML(self):
@@ -179,22 +176,22 @@ class OptionsHandler(xml.sax.handler.ContentHandler):
       file.write('   <playerOne>\n')
       file.write('      <option name="name">%s</option>\n' % self.options.playerOne["name"])
       file.write('      <option name="image">%s</option>\n' % self.options.playerOne["image"])
-      file.write('      <option name="left">%s</option>\n' % self.options.playerOne["left"])
-      file.write('      <option name="right">%s</option>\n' % self.options.playerOne["right"])
-      file.write('      <option name="up">%s</option>\n' % self.options.playerOne["up"])
-      file.write('      <option name="down">%s</option>\n' % self.options.playerOne["down"])
-      file.write('      <option name="jump">%s</option>\n' % self.options.playerOne["jump"])
-      file.write('      <option name="shoot">%s</option>\n' % self.options.playerOne["shoot"])
+      file.write('      <option name="left" type="int">%s</option>\n' % self.options.playerOne["left"])
+      file.write('      <option name="right" type="int">%s</option>\n' % self.options.playerOne["right"])
+      file.write('      <option name="up" type="int">%s</option>\n' % self.options.playerOne["up"])
+      file.write('      <option name="down" type="int">%s</option>\n' % self.options.playerOne["down"])
+      file.write('      <option name="jump" type="int">%s</option>\n' % self.options.playerOne["jump"])
+      file.write('      <option name="shoot" type="int">%s</option>\n' % self.options.playerOne["shoot"])
       file.write('   </playerOne>\n')
       file.write('   <playerTwo>\n')
       file.write('      <option name="name">%s</option>\n' % self.options.playerTwo["name"])
       file.write('      <option name="image">%s</option>\n' % self.options.playerTwo["image"])
-      file.write('      <option name="left">%s</option>\n' % self.options.playerTwo["left"])
-      file.write('      <option name="right">%s</option>\n' % self.options.playerTwo["right"])
-      file.write('      <option name="up">%s</option>\n' % self.options.playerTwo["up"])
-      file.write('      <option name="down">%s</option>\n' % self.options.playerTwo["down"])
-      file.write('      <option name="jump">%s</option>\n' % self.options.playerTwo["jump"])
-      file.write('      <option name="shoot">%s</option>\n' % self.options.playerTwo["shoot"])
+      file.write('      <option name="left" type="int">%s</option>\n' % self.options.playerTwo["left"])
+      file.write('      <option name="right" type="int">%s</option>\n' % self.options.playerTwo["right"])
+      file.write('      <option name="up" type="int">%s</option>\n' % self.options.playerTwo["up"])
+      file.write('      <option name="down" type="int">%s</option>\n' % self.options.playerTwo["down"])
+      file.write('      <option name="jump" type="int">%s</option>\n' % self.options.playerTwo["jump"])
+      file.write('      <option name="shoot" type="int">%s</option>\n' % self.options.playerTwo["shoot"])
       file.write('   </playerTwo>\n')
       file.write('</options>\n')
       file.write('\n')

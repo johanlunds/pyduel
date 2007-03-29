@@ -12,24 +12,24 @@
       <option name="time" type="int">14</option>
    </game>
    <playerOne>
-      <option name="name">Player 1</option>
-      <option name="image">player-red.png</option>
-      <option name="left">K_LEFT</option>
-      <option name="right">K_RIGHT</option>
-      <option name="up">K_UP</option>
-      <option name="down">K_DOWN</option>
-      <option name="jump">K_SPACE</option>
-      <option name="shoot">K_RETURN</option>
+      <option name="name">asd</option>
+      <option name="image">player-blue.png</option>
+      <option name="left" type="int">97</option>
+      <option name="right" type="int">100</option>
+      <option name="up" type="int">119</option>
+      <option name="down" type="int">115</option>
+      <option name="jump" type="int">9</option>
+      <option name="shoot" type="int">301</option>
    </playerOne>
    <playerTwo>
-      <option name="name">Player 2</option>
-      <option name="image">player-blue.png</option>
-      <option name="left">K_a</option>
-      <option name="right">K_d</option>
-      <option name="up">K_w</option>
-      <option name="down">K_s</option>
-      <option name="jump">K_TAB</option>
-      <option name="shoot">K_q</option>
+      <option name="name">hej</option>
+      <option name="image">player-red.png</option>
+      <option name="left" type="int">276</option>
+      <option name="right" type="int">275</option>
+      <option name="up" type="int">273</option>
+      <option name="down" type="int">274</option>
+      <option name="jump" type="int">13</option>
+      <option name="shoot" type="int">303</option>
    </playerTwo>
 </options>
 
