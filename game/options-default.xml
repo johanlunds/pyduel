@@ -2,18 +2,19 @@
 
 <options>
    <system>
-      <option name="fullscreen" type="eval">True</option>
+      <option name="fullscreen" type="eval">False</option>
       <option name="sound" type="eval">False</option>
       <option name="music" type="eval">True</option>
    </system>
    <game>
       <option name="level" type="int">1</option>
+      <option name="theme">cave</option>
       <option name="lives" type="int">10</option>
       <option name="time" type="int">14</option>
    </game>
    <playerOne>
-      <option name="name">Player 1</option>
-      <option name="image">player-red.png</option>
+      <option name="name">kurt</option>
+      <option name="image">player-blue.png</option>
       <option name="left" type="int">97</option>
       <option name="right" type="int">100</option>
       <option name="up" type="int">119</option>
@@ -22,8 +23,8 @@
       <option name="shoot" type="int">301</option>
    </playerOne>
    <playerTwo>
-      <option name="name">Player 2</option>
-      <option name="image">player-blue.png</option>
+      <option name="name">ola</option>
+      <option name="image">player-red.png</option>
       <option name="left" type="int">276</option>
       <option name="right" type="int">275</option>
       <option name="up" type="int">273</option>

@@ -17,6 +17,9 @@ class Duel(Scene):
    
    def __init__(self, game):
       Scene.__init__(self, game)
+      self.background = loadImgPng(os.path.join(game.options.game["theme"], "bg.png"))
+      game.screen.blit(self.background, (0, 0))
+      
       playerOneOptions = game.options.playerOne  
       playerTwoOptions = game.options.playerTwo
       playerOne = Player(self, playerOneOptions, (0,0))
@@ -56,7 +59,6 @@ class Duel(Scene):
       self.level.tiles.add(self.level.noneTiles)
         
    def draw(self):
-      self.game.screen.blit(self.background, (0, 0))
       self.level.draw(self.game.screen)
       self.players.draw(self.game.screen)
 
@@ -95,7 +97,15 @@ class OptionsMenu(Scene):
       self.options = self.game.optionHandler.options  
       lines = self.loadLines()
       self.menu = Menu((" Opt","ions"), lines, True)
-   
+      self.themes = []
+      self.themeIndex = 0
+      tmp = True # it is buggy without this, see: http://deadbeefbabe.org/paste/4161
+      for entry in os.listdir(DIR_GRAPH):
+         if os.path.isdir(os.path.join(DIR_GRAPH, entry)) and entry != ".svn":
+            self.themes.append(entry)
+            if self.options.game["theme"] == entry: tmp = False
+            if tmp: self.themeIndex += 1  
+
    def event(self, event):
       if event.type == KEYDOWN and event.key == K_ESCAPE:  # Escape pressed => End scene.
          self.game.optionHandler.writeXML()
@@ -135,38 +145,42 @@ class OptionsMenu(Scene):
          if self.menu.selection == 3: #level
             if self.options.game["level"] < len(LevelLoader.levels)-1: self.options.game["level"] += 1
             self.menu.setLine(3, "Level: %s" % self.options.game["level"])
-         if self.menu.selection == 4: #time
+         if self.menu.selection == 4: #theme
+            self.changeTheme(1)
+         if self.menu.selection == 5: #time
             if self.options.game["time"] < 60: self.options.game["time"] += 1
-            self.menu.setLine(4, "Timelimit: %s" % self.options.game["time"])
-         if self.menu.selection == 5: #lives
+            self.menu.setLine(5, "Timelimit: %s" % self.options.game["time"])
+         if self.menu.selection == 6: #lives
             if self.options.game["time"] < 50: self.options.game["lives"] += 1
-            self.menu.setLine(5, "Lives: %s" % self.options.game["lives"])
+            self.menu.setLine(6, "Lives: %s" % self.options.game["lives"])
  
 
       if event.type == KEYDOWN and event.key == K_LEFT:
          if self.menu.selection == 3: #level
             if self.options.game["level"] > 1: self.options.game["level"] += -1
             self.menu.setLine(3, "Level: %s" % self.options.game["level"])
-         if self.menu.selection == 4: #time
+         if self.menu.selection == 4: #theme
+            self.changeTheme(-1)
+         if self.menu.selection == 5: #time
             if self.options.game["time"] > 1: self.options.game["time"] += -1
-            self.menu.setLine(4, "Timelimit: %s" % self.options.game["time"])
-         if self.menu.selection == 5: #lives
+            self.menu.setLine(5, "Timelimit: %s" % self.options.game["time"])
+         if self.menu.selection == 6: #lives
             if self.options.game["lives"] > 1: self.options.game["lives"] += -1
-            self.menu.setLine(5, "Lives: %s" % self.options.game["lives"])
+            self.menu.setLine(6, "Lives: %s" % self.options.game["lives"])
 
       if event.type == KEYDOWN and event.key == K_RETURN:
-         if self.menu.selection == 6: #player one
+         if self.menu.selection == 7: #player one
             self.runScene(PlayerOptionsMenu(self.game, self.options.playerOne))
-         if self.menu.selection == 7: #player two
+         if self.menu.selection == 8: #player two
             self.runScene(PlayerOptionsMenu(self.game, self.options.playerTwo))
-         if self.menu.selection == 8: #reset
+         if self.menu.selection == 9: #reset
             fullscreen = self.options.system["fullscreen"]
             copy("options-default.xml", "options.xml")
             self.game.optionHandler = OptionsHandler("options.xml")
             if self.game.optionHandler.options.system["fullscreen"] == False and fullscreen: self.game.toggleFullscreen()
             elif fullscreen == False and self.game.optionHandler.options.system["fullscreen"]: self.game.toggleFullscreen()
             self.end(0)
-         if self.menu.selection == 9: #back
+         if self.menu.selection == 10: #back
             self.game.optionHandler.writeXML()
             self.end(0)
 
@@ -175,6 +189,14 @@ class OptionsMenu(Scene):
 
    def update(self):
       self.menu.update(self.game.screen, self.background)
+
+   def changeTheme(self, change):
+      """take +1 or -1 and change the image in playerOptions and the line displayed"""
+      self.themeIndex += change
+      if self.themeIndex < 0: self.themeIndex = len(self.themes)-1
+      if self.themeIndex >= len(self.themes): self.themeIndex = 0
+      self.options.game["theme"] = self.themes[self.themeIndex]
+      self.menu.setLine(4,"Theme: %s" % self.options.game["theme"])
 
    def loadLines(self):
       """Return the lines used when loading the menu"""
@@ -186,6 +208,7 @@ class OptionsMenu(Scene):
       if self.options.system["music"]: lines.append("Music: %s" % "Yes")
       else: lines.append("Music: %s" % "No")
       lines.append("Level: %s" % self.options.game["level"])
+      lines.append("Theme: %s" % self.options.game["theme"])
       lines.append("Timelimit: %s" % self.options.game["time"])
       lines.append("Lives: %s" % self.options.game["lives"])     
       lines.append("Player 1")
@@ -276,7 +299,7 @@ class PlayerOptionsMenu(Scene):
    def getKey(self, oldKey):
       """check for a key and return the keycode, escape returns oldKey parameter"""
       while 1:
-         self.update()
+         self.menu.update(self.game.screen, self.background) # Does not seem to be working
          for event in pygame.event.get():
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                return oldKey
@@ -289,7 +312,7 @@ class PlayerOptionsMenu(Scene):
       string = ""
       while True:
          self.menu.setLine(0,"Name: %s" % string)
-         self.update()
+         self.menu.update(self.game.screen, self.background) # Doesnt seem to be working
          for event in pygame.event.get():
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                self.menu.setLine(0,"Name: %s" % oldString)

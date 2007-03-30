@@ -170,6 +170,7 @@ class OptionsHandler(xml.sax.handler.ContentHandler):
       file.write('   </system>\n')
       file.write('   <game>\n')
       file.write('      <option name="level" type="int">%d</option>\n' % self.options.game["level"])
+      file.write('      <option name="theme">%s</option>\n' % self.options.game["theme"])
       file.write('      <option name="lives" type="int">%d</option>\n' % self.options.game["lives"])
       file.write('      <option name="time" type="int">%d</option>\n' % self.options.game["time"])
       file.write('   </game>\n')

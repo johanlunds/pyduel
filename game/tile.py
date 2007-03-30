@@ -39,7 +39,7 @@ class Tile(pygame.sprite.Sprite):
       pygame.sprite.Sprite.__init__(self)
       
       self.level = level # The level the tile is in
-      self.image = loadImgPng(image) # lazy loading of images.
+      self.image = loadImgPng(os.path.join("jungle", image)) # This should change game.options.game["theme"], image
       self.newPos(cords)
    
    def newPos(self, cords):
