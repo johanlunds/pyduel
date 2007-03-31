@@ -17,6 +17,7 @@ class Menu(object):
       self.ammount = len(lines)
       self.selection = 0
       # Load fonts
+      self.theme = "jungle" # hardcoded menu level theme
       self.fonts = {}
       self.fonts["big"] = pygame.font.Font(os.path.join(DIR_FONT, "por2.ttf"), 72)
       self.fonts["medium"] = pygame.font.Font(os.path.join(DIR_FONT, "por2.ttf"), 40)
@@ -59,7 +60,7 @@ class Menu(object):
          
    def loadLevel(self, levelNumber):
       self.levelNumber = levelNumber
-      self.level = self.levelLoader.load(self.levelLoader.__class__.levels[levelNumber]) # use level list from level loader's class
+      self.level = self.levelLoader.load(LevelLoader.levels[levelNumber], self.theme) # use level list from level loader's class
    def setLine(self, linenumber, string):
       self.textlinesActive[linenumber].setString(string)
       self.textlinesInactive[linenumber].setString(string)

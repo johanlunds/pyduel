@@ -20,7 +20,7 @@ class Duel(Scene):
    def __init__(self, game):
       Scene.__init__(self, game)
       
-      self.levelLoader = LevelLoader(self, self.game.options.game["theme"])
+      self.levelLoader = LevelLoader(self)
       self.loadLevel(1) # First level
 
       self.background = loadImgPng(os.path.join(self.level.theme, "bg.png"))
@@ -34,7 +34,7 @@ class Duel(Scene):
    
    def loadLevel(self, levelNumber):
       self.levelNumber = levelNumber
-      self.level = self.levelLoader.load(self.levelLoader.__class__.levels[levelNumber]) # use level list from level loader's class
+      self.level = self.levelLoader.load(LevelLoader.levels[levelNumber], self.game.options.game["theme"]) # use level list from level loader's class
    
    def event(self, event):
       if event.type == KEYDOWN and event.key == K_ESCAPE:

@@ -24,9 +24,9 @@ class LevelLoader(xml.sax.handler.ContentHandler):
       self.scene = scene
       self.level = None # set in self.load()
    
-   def load(self, filename):
+   def load(self, filename, theme): # theme = theme for level
       """Open file and parse contents. Returns new level object."""
-      self.level = Level(self.scene)
+      self.level = Level(self.scene, theme)
       self.elementTree = [] # Used to keep track of current element and it's parents
       self.propertiesForCell = {}
       self.propertiesForLayer = {}
