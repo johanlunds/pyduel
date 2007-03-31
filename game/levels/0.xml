@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-Från http://lexin.nada.kth.se/cgi-bin/sve-eng:
-   explicit = tydlig, klar, uttalad, explicit (adjektiv)
-   implicit = underförstådd, implicit, tyst, stillatigande (adjektiv)
--->
 <map>
-   <!-- name defaults to "normal" and position to "implicit", so really not necessary -->
    <layer name="normal" position="implicit">
       <data>
          <row>
-            <!--
-            <cell>
-               <property name="" value="" />
-            </cell>
-            -->
             <cell />
             <cell />
             <cell />

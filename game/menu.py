@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import xml.sax.handler
-import pygame
-from pygame.locals import *
-from level import LevelLoader
 from variables import *
 
+import os
+import xml.sax.handler
+
+from level import LevelLoader
+
+import pygame
+from pygame.locals import *
 
 class Menu(object):
    """menu class, used by diffrent menus"""

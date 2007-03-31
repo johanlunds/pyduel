@@ -3,9 +3,10 @@
 
 from variables import *
 
+from menu import OptionsHandler
+
 import pygame
 from pygame.locals import *
-from menu import OptionsHandler
 
 class Game(object):
    """Not very useful except from initializing a Pygame window and the game."""
@@ -15,13 +16,14 @@ class Game(object):
    def __init__(self, resolution, caption=None, icon=None):
       pygame.init()
       if not (pygame.mixer or pygame.font): raise SystemExit, "Missing required Pygame mixer and/or font modules."
+      
       self.optionHandler = OptionsHandler("options.xml")
       self.options = self.optionHandler.options
+      
       if self.options.system["fullscreen"]:
          self.screen = pygame.display.set_mode(resolution, FULLSCREEN)
       else:
          self.screen = pygame.display.set_mode(resolution)
-      
 
       if caption:
          pygame.display.set_caption(caption)
@@ -43,14 +45,14 @@ class Game(object):
        tmp = screen.convert()
        caption = pygame.display.get_caption()
        
-       w,h = screen.get_width(),screen.get_height()
+       w, h = (screen.get_width(), screen.get_height())
        flags = screen.get_flags()
        bits = screen.get_bitsize()
        
        pygame.display.init()
        
-       screen = pygame.display.set_mode((w,h),flags^FULLSCREEN,bits)
-       screen.blit(tmp,(0,0))
+       screen = pygame.display.set_mode((w, h), flags^FULLSCREEN, bits)
+       screen.blit(tmp, (0, 0))
        pygame.display.set_caption(*caption)
     
        pygame.key.set_mods(0) #HACK: work-a-round for a SDL bug??
@@ -67,7 +69,7 @@ class Scene(object):
       self.background = pygame.Surface(self.game.screen.get_size()).convert() # Temporary
       self.background.fill((0, 0, 0)) # Temporary
    
-   def end(self, retVal):
+   def end(self, retVal=None):
       """Call this one if you want to end a scene."""
       self.returnValue = retVal
       raise SceneExit
@@ -75,12 +77,15 @@ class Scene(object):
    def runScene(self, scene):
       """Run another scene and continue with current after."""
       retVal = scene.run()
+      self.game.screen.blit(self.background, (0, 0))
       self.draw()
       return retVal
    
    def run(self):
+      self.game.screen.blit(self.background, (0, 0))
       self.draw()
-      pygame.display.flip()      
+      pygame.display.flip()     
+       
       while 1:
          self.game.tick()
          for event in pygame.event.get():
@@ -111,5 +116,4 @@ class Scene(object):
    
    def draw(self):
       """Called before the loop starts in the scene. Supposed to draw whole scene. Calls self.update() by default."""
-      self.game.screen.blit(self.background, (0, 0))
       self.update()

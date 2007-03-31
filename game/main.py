@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from variables import *
+
 import os
-from shutil import copy 
+import shutil
+
 from engine import Game, Scene
 from level import LevelLoader
 from player import Player
-from variables import *
-from menu import *
+from menu import Menu, Options, OptionsHandler
 
 import pygame
 from pygame.locals import *
@@ -17,17 +19,18 @@ class Duel(Scene):
    
    def __init__(self, game):
       Scene.__init__(self, game)
-      self.background = loadImgPng(os.path.join(game.options.game["theme"], "bg.png"))
-      game.screen.blit(self.background, (0, 0))
       
-      playerOneOptions = game.options.playerOne  
-      playerTwoOptions = game.options.playerTwo
-      playerOne = Player(self, playerOneOptions, (0,0))
-      playerTwo = Player(self, playerTwoOptions, (RES_WIDTH-40,0))
-      
-      self.players = pygame.sprite.Group(playerTwo, playerOne)
-      self.levelLoader = LevelLoader(self)
+      self.levelLoader = LevelLoader(self, self.game.options.game["theme"])
       self.loadLevel(1) # First level
+
+      self.background = loadImgPng(os.path.join(self.level.theme, "bg.png"))
+      
+      self.players = pygame.sprite.Group()
+      for i, playerOpts in zip(range(2), (self.game.options.playerOne, self.game.options.playerTwo)):
+         # Could randomize start pos with list.pop() and random.random() and len(list)
+         startPos = self.level.getPixelsFromCords(self.level.startPos[i])
+         keys = dict([(key, playerOpts[key]) for key in ("left", "right", "up", "down", "jump", "shoot")])
+         self.players.add(Player(self, loadImgPng(playerOpts["image"]), keys, startPos))
    
    def loadLevel(self, levelNumber):
       self.levelNumber = levelNumber
@@ -35,8 +38,7 @@ class Duel(Scene):
    
    def event(self, event):
       if event.type == KEYDOWN and event.key == K_ESCAPE:
-         self.end(0)
-
+         self.end()
 
    def loop(self):
       pygame.event.pump()
@@ -62,7 +64,6 @@ class Duel(Scene):
       self.level.draw(self.game.screen)
       self.players.draw(self.game.screen)
 
-
 class MainMenu(Scene):
    def __init__(self, game,lines):
       Scene.__init__(self, game)
@@ -73,7 +74,7 @@ class MainMenu(Scene):
       
    def event(self, event):      
       if event.type == KEYDOWN and event.key == K_ESCAPE: # Escape pressed => Exit.
-         self.end(0)   
+         self.end()   
       if event.type == KEYDOWN and event.key == K_DOWN: self.menu.selection += 1
       if (self.menu.selection < 0): self.menu.selection = self.menu.ammount-1
       if event.type == KEYDOWN and event.key == K_UP: self.menu.selection += -1
@@ -84,7 +85,7 @@ class MainMenu(Scene):
          if self.menu.selection == 1:
             self.runScene(OptionsMenu(self.game))
          if self.menu.selection == 2:
-            self.end(0)
+            self.end()
    
    def update(self):
       self.menu.update(self.game.screen, self.background)
@@ -109,7 +110,7 @@ class OptionsMenu(Scene):
    def event(self, event):
       if event.type == KEYDOWN and event.key == K_ESCAPE:  # Escape pressed => End scene.
          self.game.optionHandler.writeXML()
-         self.end(0)
+         self.end()
       # Check for keyp up/down and set new selection    
       if event.type == KEYDOWN and event.key == K_DOWN: self.menu.selection += 1
       if (self.menu.selection < 0): self.menu.selection = self.menu.ammount-1
@@ -175,14 +176,14 @@ class OptionsMenu(Scene):
             self.runScene(PlayerOptionsMenu(self.game, self.options.playerTwo))
          if self.menu.selection == 9: #reset
             fullscreen = self.options.system["fullscreen"]
-            copy("options-default.xml", "options.xml")
+            shutil.copy("optionsDefault.xml", "options.xml")
             self.game.optionHandler = OptionsHandler("options.xml")
             if self.game.optionHandler.options.system["fullscreen"] == False and fullscreen: self.game.toggleFullscreen()
             elif fullscreen == False and self.game.optionHandler.options.system["fullscreen"]: self.game.toggleFullscreen()
-            self.end(0)
+            self.end()
          if self.menu.selection == 10: #back
             self.game.optionHandler.writeXML()
-            self.end(0)
+            self.end()
 
    def loop(self):
       self.menu.headerSlide()
@@ -237,7 +238,7 @@ class PlayerOptionsMenu(Scene):
       
    def event(self, event):      
       if event.type == KEYDOWN and event.key == K_ESCAPE: # Escape pressed => Exit.
-         self.end(0)   
+         self.end()   
       if event.type == KEYDOWN and event.key == K_DOWN: self.menu.selection += 1
       if (self.menu.selection < 0): self.menu.selection = self.menu.ammount-1
       if event.type == KEYDOWN and event.key == K_UP: self.menu.selection += -1
@@ -264,7 +265,7 @@ class PlayerOptionsMenu(Scene):
             self.playerOptions["shoot"] = self.getKey(self.playerOptions["shoot"])
             self.menu.setLine(7,"Shoot: %s" % pygame.key.name(self.playerOptions["shoot"]))
          if self.menu.selection == 8: # Back
-            self.end(0)
+            self.end()
 
       if self.menu.selection == 1 and event.type == KEYDOWN and (event.key == K_RETURN or event.key == K_RIGHT):    
          self.changeImage(1)
@@ -328,11 +329,10 @@ class PlayerOptionsMenu(Scene):
                   string += pygame.key.name(event.key)
                if event.key == K_SPACE:
                   string += " "         
-               
 
 def main():
    pyduel = Game(RESOLUTION, CAPTION, ICON)
-   firstScene = MainMenu(pyduel,("New Game","Options","Quit"))
+   firstScene = MainMenu(pyduel, ("New Game", "Options", "Quit"))
    pyduel.start(firstScene)
    raise SystemExit, 0
 

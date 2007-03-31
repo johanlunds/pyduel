@@ -13,11 +13,11 @@ GRAVITY = 1 # Move to level files?
 # Change working directory so that the paths work correctly
 os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
 
-DIR_GRAPH = os.path.abspath(os.path.join("data", "graphic"))
-DIR_SOUND = os.path.abspath(os.path.join("data", "sound"))
-DIR_MUSIC = os.path.abspath(os.path.join("data", "music"))
-DIR_FONT = os.path.abspath(os.path.join("data", "font"))
-DIR_LEVELS = os.path.abspath("levels")
+DIR_GRAPH = os.path.join("data", "graphic")
+DIR_SOUND = os.path.join("data", "sound")
+DIR_MUSIC = os.path.join("data", "music")
+DIR_FONT = os.path.join("data", "font")
+DIR_LEVELS = "levels"
 
 # Used in game initiation. May be removed later
 CAPTION = "PyDuel"

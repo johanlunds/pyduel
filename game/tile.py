@@ -39,7 +39,7 @@ class Tile(pygame.sprite.Sprite):
       pygame.sprite.Sprite.__init__(self)
       
       self.level = level # The level the tile is in
-      self.image = loadImgPng(os.path.join("jungle", image)) # This should change game.options.game["theme"], image
+      self.image = loadImgPng(os.path.join(self.level.theme, image)) # Lazy loading of images
       self.newPos(cords)
    
    def newPos(self, cords):
@@ -118,4 +118,4 @@ class ItemTile(Tile):
       # however they can override this method, or skip to call it
       
       self.level.get((self.col, self.row), True).item = None # Remove from it's parent tile
-      self.level.itemTiles.remove(self)
+      self.kill() # remove from all groups

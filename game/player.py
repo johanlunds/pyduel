@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tile import Tile
 from variables import *
+
+from tile import Tile
 from animation import Animation
+
 import pygame
 from pygame.locals import *
 
@@ -54,13 +56,10 @@ class Player(pygame.sprite.Sprite):
    A_RIGHT = 0 # The frame for facing left
    A_LEFT = 4 # and right
 
-   def __init__(self, scene, options, position):
+   def __init__(self, scene, image, keys, position):
       pygame.sprite.Sprite.__init__(self)
       
       self.scene = scene
-      
-      image = loadImgPng(options["image"])
-      keys = options["left"], options["right"], options["up"], options["down"], options["jump"]
 
       self.animation = Animation(self)
       self.image, self.rect = self.animation.loadFrames(image, Player.A_FRAMES, flipX=True)
@@ -70,7 +69,7 @@ class Player(pygame.sprite.Sprite):
       self.animation.addSequence("walkLeft", walkLeft, True) # 3rd arg is for repeat
       self.animation.addSequence("walkRight", walkRight, True)
       
-      self.keyLeft, self.keyRight, self.keyUp, self.keyDown, self.keyJump = self.keys = keys
+      self.keys = keys # dict with "left", "right", "up", "down", "jump", "shoot"
       self.xSpeed, self.ySpeed = (Player.SPEED, Player.SPEED) # xSpeed right = positive; ySpeed up = positive
       self.state = Player.JUMPING # Maybe change to STANDING later, but player begins in air right now
       
@@ -103,14 +102,14 @@ class Player(pygame.sprite.Sprite):
       """Handles the different keys pressed on the keyboard."""
       self.animation.pause() # To make us stand still if we haven't any keys pressed
       
-      if keyInput[self.keyJump] and self.state not in (Player.JUMPING, Player.CLIMBING):
+      if keyInput[self.keys["jump"]] and self.state not in (Player.JUMPING, Player.CLIMBING):
          self.animation.stop()
          self.image = self.animation.getDefaultImage()
          
          self.state = Player.JUMPING
          self.ySpeed = Player.JUMPSPEED
       
-      if keyInput[self.keyLeft]:
+      if keyInput[self.keys["left"]]:
          self.animation.defaultFrame = Player.A_LEFT # A bit of a hack to make us face the right direction when climbing etc
          if self.animation.getCurrent()[0] == "walkLeft": self.animation.unpause() # if already animating walking right: continue
          else: self.animation.start("walkLeft")
@@ -121,7 +120,7 @@ class Player(pygame.sprite.Sprite):
             else: self.state = Player.JUMPING # we moved into air or onto ground
          else: # move as usual
             self.fixPosition(LEFT)
-      elif keyInput[self.keyRight]:
+      elif keyInput[self.keys["right"]]:
          self.animation.defaultFrame = Player.A_RIGHT # A bit of a hack to make us face the right direction when climbing etc
          if self.animation.getCurrent()[0] == "walkRight": self.animation.unpause() # if already animating walking left: continue
          else: self.animation.start("walkRight")
@@ -133,13 +132,13 @@ class Player(pygame.sprite.Sprite):
          else: # move as usual
             self.fixPosition(RIGHT)
             
-      if keyInput[self.keyUp] and self.state != Player.JUMPING:
+      if keyInput[self.keys["up"]] and self.state != Player.JUMPING:
          self.move(0, Player.SPEED)
          if self.canClimb(UP): # also fixes pos if we hit ceiling and is on ladder
             self.climb()
          else:
             self.rect = self.oldRect
-      elif keyInput[self.keyDown] and self.state != Player.JUMPING:
+      elif keyInput[self.keys["down"]] and self.state != Player.JUMPING:
          self.move(0, -Player.SPEED)
          if self.canClimb(DOWN):
             self.climb()

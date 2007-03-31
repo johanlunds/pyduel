@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from variables import *
+
 import pygame
 from pygame.locals import *
-
-from variables import *
 
 # TODO: new property "previous"?
 
@@ -13,8 +13,8 @@ class Animation(object):
    
    Should be property of the animated sprite, and call update() method every game loop."""
    
-   def __init__(self, resource):
-      self.resource = resource # The animation owner. Must have image property
+   def __init__(self, obj):
+      self.obj = obj # The animation owner. Must have image property
       # self.sequences format: {name: (((frameNumber, duration), [...]), repeat), [...]}
       self.sequences = {}
       
@@ -110,7 +110,7 @@ class Animation(object):
       frames, repeat = self.sequences[self.current]
       # self.seqFrame = the current sequence's frame number (not a self.frames index)
       frameNum, duration = frames[self.seqFrame] # frameNum = an index in self.frames
-      self.resource.image = self.frames[frameNum] # The real magic: change animation owners image
+      self.obj.image = self.frames[frameNum] # The real magic: change animation owners image
       
       self.counter += 1 # Increase frame counter
       if self.counter >= duration: # change to next frame

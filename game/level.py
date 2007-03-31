@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from variables import *
+
 import os, copy
 import xml.sax.handler
-from variables import *
 
 # import tile classes (Tile, NoneTile etc)
 from tile import *
@@ -47,10 +48,13 @@ class LevelLoader(xml.sax.handler.ContentHandler):
       elif name == "layer":
          self.col, self.row = (0, 0)
          self.position = attributes.get("position", "implicit") # if not found return 2nd arg
+         self.isPlayerLayer = False
          if attributes["name"] == "ladders":
             self.typeDefault = Tile.ladderDefault
          elif attributes["name"] == "items":
             self.typeDefault = Tile.itemDefault
+         elif attributes["name"] == "players": # available player start positions
+            self.isPlayerLayer = True
          else:
             self.typeDefault = Tile.default
       elif name == "cell":
@@ -79,9 +83,12 @@ class LevelLoader(xml.sax.handler.ContentHandler):
             cords = (int(self.cellAttributes["col"]), int(self.cellAttributes["row"]))
          else: # default
             cords = (self.col, self.row)
-            
-         type = int(self.cellAttributes.get("type", self.typeDefault)) # Get and remove, or return 2nd arg
-         self.level.add(cords, type, self.propertiesForCell)
+         
+         if self.isPlayerLayer:
+            self.level.startPos.append(cords)
+         else:
+            type = int(self.cellAttributes.get("type", self.typeDefault)) # Get and remove, or return 2nd arg
+            self.level.add(cords, type, self.propertiesForCell)
          
          self.col += 1 # after we've added the tile
          self.propertiesForCell = {} # reset
@@ -107,8 +114,11 @@ class LevelLoader(xml.sax.handler.ContentHandler):
 class Level(object):
    """Level class for levels in the game."""
 
-   def __init__(self, scene):
+   def __init__(self, scene, theme):
       self.scene = scene
+      self.theme = theme
+      self.startPos = [] # Available start positions. Format: (col, row)
+      
       self.tilesArray = {}
       self.tiles = pygame.sprite.Group()
       self.noneTiles = pygame.sprite.Group()
