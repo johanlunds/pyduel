@@ -158,7 +158,7 @@ class ItemTile(Tile):
       
 class HealthItemTile(ItemTile):
 
-   HEALTH = 20
+   HEALTH = 25
 
    def __init__(self, level, cords, image):
       ItemTile.__init__(self, level, cords, image)

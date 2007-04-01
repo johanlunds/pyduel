@@ -6,13 +6,15 @@ from variables import *
 import os
 import shutil
 
+import pygame
+from pygame.locals import *
+
 from engine import Game, Scene
 from level import LevelLoader
 from player import Player
 from menu import Menu, Options, OptionsHandler
+from hud import HUD
 
-import pygame
-from pygame.locals import *
 
 class Duel(Scene):
    """The main game scene. Where the players fight against eachother."""
@@ -22,22 +24,26 @@ class Duel(Scene):
       
       self.levelLoader = LevelLoader(self)
       self.loadLevel(1) # First level
-
-      self.background = loadImgPng(os.path.join(self.level.theme, "bg.png"))
       
+      self.background = loadImgPng(os.path.join(self.level.theme, "bg.png"))
       self.weapons = pygame.sprite.Group()
       self.players = pygame.sprite.Group()
       for i, playerOpts in zip(range(2), (self.game.options.playerOne, self.game.options.playerTwo)):
          # Could randomize start pos with list.pop() and random.random() and len(list)
          startPos = self.level.getPixelsFromCords(self.level.startPos[i])
          keys = dict([(key, playerOpts[key]) for key in ("left", "right", "up", "down", "jump", "shoot")])
-         self.players.add(Player(self, loadImgPng(playerOpts["image"]), keys, startPos))
-   
+         self.players.add(Player(self, playerOpts["name"], loadImgPng(playerOpts["image"]), keys, startPos))
+         
+      self.hud = HUD(self.game.options.playerOne["name"], self.game.options.playerTwo["name"], 30)
+      
    def loadLevel(self, levelNumber):
       self.levelNumber = levelNumber
       self.level = self.levelLoader.load(LevelLoader.levels[levelNumber], self.game.options.game["theme"]) # use level list from level loader's class
    
-   def playerKilled(self, player):
+   def playerKilled(self, deadPlayer):
+      for player in self.players:
+         if deadPlayer != player:
+            self.runScene(GameOverMenu(self.game, player.name))
       self.end()
    
    def event(self, event):
@@ -49,16 +55,19 @@ class Duel(Scene):
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
       self.players.update(keyInput)
+
+      
    
    def update(self):
       self.level.tiles.remove(self.level.noneTiles) # why? see Level.draw()
-      
+
       self.weapons.clear(self.game.screen, self.background)
       self.players.clear(self.game.screen, self.background)
       self.level.bullets.clear(self.game.screen, self.background)
       self.level.tiles.clear(self.game.screen, self.background)
       self.level.ladderTiles.clear(self.game.screen, self.background)
       self.level.itemTiles.clear(self.game.screen, self.background)
+      self.hud.clear(self.game.screen, self.background)
       
       self.level.tiles.draw(self.game.screen)
       self.level.ladderTiles.draw(self.game.screen)
@@ -66,12 +75,45 @@ class Duel(Scene):
       self.players.draw(self.game.screen)
       self.weapons.draw(self.game.screen)
       self.level.bullets.draw(self.game.screen)
-      
+   
       self.level.tiles.add(self.level.noneTiles)
+      
+      status = []
+      for player in self.players:
+         status.append((player.health, player.weapon.ammo))
+      self.hud.update(status)
+      self.hud.draw(self.game.screen)
         
    def draw(self):
       self.level.draw(self.game.screen)
       self.players.draw(self.game.screen)
+      
+
+class GameOverMenu(Scene):
+   def __init__(self, game, playerName = False):
+      Scene.__init__(self, game)
+      lines = []
+      if playerName: lines.append(playerName + " won!")
+      else: lines.append("It's a tie!")
+      lines.append("Back")
+      self.menu = Menu(("Game","Over"),lines)
+      self.menu.selection = 1
+      
+   def loop(self):
+      self.menu.headerSlide()
+      
+   def event(self, event):      
+      if event.type == KEYDOWN and event.key == K_ESCAPE: # Escape pressed => Exit.
+         self.end()   
+      if event.type == KEYDOWN and event.key == K_RETURN: # Check for enter and do action
+         if self.menu.selection == 0:
+            pass
+         if self.menu.selection == 1:
+            self.end()
+   
+   def update(self):
+      self.menu.update(self.game.screen, self.background)
+      
 
 class MainMenu(Scene):
    def __init__(self, game,lines):
@@ -344,13 +386,13 @@ class PlayerOptionsMenu(Scene):
                self.menu.setColor(0, (255,215,0))
                return
             if event.type == KEYDOWN and event.key == K_RETURN and string != "":
-               self.playerOptions["name"] = string
+               self.playerOptions["name"] = string.title()
                self.menu.setColor(0, (255,215,0))
                return
             elif event.type == KEYDOWN:
                if event.key == K_BACKSPACE:
                   if string != "": string = string[0:len(string)-1]
-               if event.key >= K_a and event.key <= K_z or event.key >= K_0 and event.key <= K_9:
+               if len(string) < 13 and event.key >= K_a and event.key <= K_z or event.key >= K_0 and event.key <= K_9:
                   string += pygame.key.name(event.key)
                if event.key == K_SPACE:
                   string += " "         

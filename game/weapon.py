@@ -10,7 +10,7 @@ from pygame.locals import *
       
 class Weapon(pygame.sprite.Sprite):
 
-   SHOOTSPEED = 40 # higher value = longer pauses between shooting
+   SHOOTSPEED = 200 # higher value = longer pauses between shooting
    PIPEPOS = 2 # Where the bullets should come out from
    MAX_AMMO = 30
    
