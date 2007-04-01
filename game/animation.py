@@ -69,6 +69,13 @@ class Animation(object):
       """Returns image surface."""
       return self.frames[frame]
    
+   def imageIn(self, image, seqName):
+      frames, repeat = self.sequences[seqName]
+      for frame in frames:
+         frameNum, duration = frame
+         if image is self.frames[frameNum]: return True
+      return False
+   
    def start(self, name):
       if name is None: raise StandardError, "Invalid name of sequence (name is None)."
       self.isStopped, self.isPaused = (False, False)

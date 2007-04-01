@@ -33,7 +33,7 @@ class Tile(pygame.sprite.Sprite):
             ("Cloud", {"image": "tile-ground-cloud-left.png"}),
             ("Cloud", {"image": "tile-ground-cloud-right.png"}),
             ("Ladder", {"image": "tile-ladder.png"}),
-            ("Item", {"image": "tile-item.png"})]
+            ("HealthItem", {"image": "tile-item.png"})]
    
    def __init__(self, level, cords, image, *args):
       pygame.sprite.Sprite.__init__(self)
@@ -119,3 +119,14 @@ class ItemTile(Tile):
       
       self.level.get((self.col, self.row), True).item = None # Remove from it's parent tile
       self.kill() # remove from all groups
+      
+class HealthItemTile(ItemTile):
+
+   HEALTH = 20
+
+   def __init__(self, level, cords, image):
+      ItemTile.__init__(self, level, cords, image)
+   
+   def walkedOn(self, player):
+      self.removeFromLevel()
+      player.health = min(HealthItemTile.HEALTH + player.health, MAX_HEALTH) # MAX if new health > MAX

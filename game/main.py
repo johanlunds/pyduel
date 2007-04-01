@@ -36,11 +36,15 @@ class Duel(Scene):
       self.levelNumber = levelNumber
       self.level = self.levelLoader.load(LevelLoader.levels[levelNumber], self.game.options.game["theme"]) # use level list from level loader's class
    
+   def playerKilled(self, player):
+      self.end()
+   
    def event(self, event):
       if event.type == KEYDOWN and event.key == K_ESCAPE:
          self.end()
 
    def loop(self):
+      self.level.update()
       pygame.event.pump()
       keyInput = pygame.key.get_pressed()
       self.players.update(keyInput)
@@ -49,6 +53,7 @@ class Duel(Scene):
       self.level.tiles.remove(self.level.noneTiles) # why? see Level.draw()
       
       self.players.clear(self.game.screen, self.background)
+      self.level.bullets.clear(self.game.screen, self.background)
       self.level.tiles.clear(self.game.screen, self.background)
       self.level.ladderTiles.clear(self.game.screen, self.background)
       self.level.itemTiles.clear(self.game.screen, self.background)
@@ -57,6 +62,7 @@ class Duel(Scene):
       self.level.ladderTiles.draw(self.game.screen)
       self.level.itemTiles.draw(self.game.screen)
       self.players.draw(self.game.screen)
+      self.level.bullets.draw(self.game.screen)
       
       self.level.tiles.add(self.level.noneTiles)
         

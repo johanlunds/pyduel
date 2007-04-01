@@ -126,6 +126,7 @@ class Level(object):
       self.cloudTiles = pygame.sprite.Group()
       self.ladderTiles = pygame.sprite.Group()
       self.itemTiles = pygame.sprite.Group()
+      self.bullets = pygame.sprite.Group()
 
    def draw(self, screen):
       # First we remove all none tiles from self.tiles.
@@ -136,6 +137,10 @@ class Level(object):
       
       self.ladderTiles.draw(screen) # because is not in "normal" layer
       self.itemTiles.draw(screen)
+      self.bullets.draw(screen) # though there shouldn't be any bullets in the beginning
+
+   def update(self):
+      self.bullets.update()
       
    def getPixelsFromCords(self, cords):
       """Returns X and Y position calculated from column and row position."""

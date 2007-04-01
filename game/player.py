@@ -5,45 +5,11 @@ from variables import *
 
 from tile import Tile
 from animation import Animation
+from weapon import Weapon
 
 import pygame
 from pygame.locals import *
 
-class SurroundingTiles(object):
-   """Help class for Player-class. Holds variables for player's surrounding (and center) tiles."""
-   
-   def __init__(self, rect, scene):
-      self.forRect = rect
-      self.getFunc = scene.level.get # Function used to fetch tiles
-      self.setCenter()
-      self.setSides()
-      self.setCorners()
-      
-   def setCenter(self):
-      rect = self.forRect
-      self.center = self.getFunc((rect.centerx, rect.centery))
-      
-   def setSides(self):
-      rect = self.forRect
-      self.left = self.getFunc((rect.left, rect.centery))
-      self.right = self.getFunc((rect.right, rect.centery))
-      self.top = self.getFunc((rect.centerx, rect.top))
-      self.bottom = self.getFunc((rect.centerx, rect.bottom))
-      
-   def getSides(self):
-      return (self.top, self.right, self.bottom, self.left) # Return in clockwise order
-   
-   def setCorners(self):
-      rect = self.forRect
-      self.topLeft = self.getFunc((rect.left, rect.top))
-      self.topRight = self.getFunc((rect.right, rect.top))
-      self.bottomLeft = self.getFunc((rect.left, rect.bottom))
-      self.bottomRight = self.getFunc((rect.right, rect.bottom))
-   
-   def getCorners(self):
-      # Return in clockwise order, starting with topleft (maybe should be topright)
-      return (self.topLeft, self.topRight, self.bottomRight, self.bottomLeft)
-   
 class Player(pygame.sprite.Sprite):
 
    JUMPSPEED = 14 # Speed at start of jump
@@ -72,6 +38,9 @@ class Player(pygame.sprite.Sprite):
       self.keys = keys # dict with "left", "right", "up", "down", "jump", "shoot"
       self.xSpeed, self.ySpeed = (Player.SPEED, Player.SPEED) # xSpeed right = positive; ySpeed up = positive
       self.state = Player.JUMPING # Maybe change to STANDING later, but player begins in air right now
+      
+      self.health = MAX_HEALTH
+      self.weapon = Weapon(self.scene, self)
       
    def update(self, keyInput):
       self.handleKeyInput(keyInput)
@@ -144,7 +113,15 @@ class Player(pygame.sprite.Sprite):
             self.climb()
          elif not self.fixPosition(DOWN): # Check if we've hit ground, and fix position in that case
             self.state = Player.JUMPING # Else we're in the air
-
+            
+      if keyInput[self.keys["shoot"]] and self.weapon.canShoot():
+         if self.animation.imageIn(self.image, "walkLeft"):
+            # we're facing left
+            self.weapon.shoot(LEFT)
+         elif self.animation.imageIn(self.image, "walkRight"):
+            # we're facing right
+            self.weapon.shoot(RIGHT)
+   
    def checkOuterBounds(self):
       # Player cant go outside the screens sides, but can jump over top
       if self.rect.right < 0:
