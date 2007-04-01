@@ -19,8 +19,7 @@ class Weapon(pygame.sprite.Sprite):
    
       self.scene = scene
       self.obj = obj
-      image = pygame.Surface((8, 4))
-      image.fill((0, 0, 255)) # blue
+      image = loadImgPng("weapon-pistol.png")
       self.image, self.rect = (image, image.get_rect())
       self.setPos()
       self.bullets = pygame.sprite.Group()
