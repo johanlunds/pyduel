@@ -252,24 +252,36 @@ class PlayerOptionsMenu(Scene):
       if event.type == KEYDOWN and event.key == K_RETURN: # Check for enter and do action
          if self.menu.selection == 0: # Name
             self.setName()
-         if self.menu.selection == 2: # Left 
+         if self.menu.selection == 2: # Left
+            self.menu.setColor(2, (255,50,50)) 
             self.playerOptions["left"] = self.getKey(self.playerOptions["left"])
             self.menu.setLine(2,"Left: %s" % pygame.key.name(self.playerOptions["left"]))
+            self.menu.setColor(2, (255,215,0)) 
          if self.menu.selection == 3: # Right 
+            self.menu.setColor(3, (255,50,50)) 
             self.playerOptions["right"] = self.getKey(self.playerOptions["right"])
             self.menu.setLine(3,"Right: %s" % pygame.key.name(self.playerOptions["right"]))
+            self.menu.setColor(3, (255,215,0)) 
          if self.menu.selection == 4: # Up 
+            self.menu.setColor(4, (255,50,50)) 
             self.playerOptions["up"] = self.getKey(self.playerOptions["up"])
             self.menu.setLine(4,"Up: %s" % pygame.key.name(self.playerOptions["up"]))
+            self.menu.setColor(4, (255,215,0)) 
          if self.menu.selection == 5: # Down 
+            self.menu.setColor(5, (255,50,50)) 
             self.playerOptions["down"] = self.getKey(self.playerOptions["down"])
             self.menu.setLine(5,"Down: %s" % pygame.key.name(self.playerOptions["down"]))
+            self.menu.setColor(5, (255,215,0)) 
          if self.menu.selection == 6: # Jump 
+            self.menu.setColor(6, (255,50,50)) 
             self.playerOptions["jump"] = self.getKey(self.playerOptions["jump"])
             self.menu.setLine(6,"Jump: %s" % pygame.key.name(self.playerOptions["jump"]))
+            self.menu.setColor(6, (255,215,0)) 
          if self.menu.selection == 7: # Shoot 
+            self.menu.setColor(7, (255,50,50)) 
             self.playerOptions["shoot"] = self.getKey(self.playerOptions["shoot"])
             self.menu.setLine(7,"Shoot: %s" % pygame.key.name(self.playerOptions["shoot"]))
+            self.menu.setColor(7, (255,215,0)) 
          if self.menu.selection == 8: # Back
             self.end()
 
@@ -306,27 +318,31 @@ class PlayerOptionsMenu(Scene):
    def getKey(self, oldKey):
       """check for a key and return the keycode, escape returns oldKey parameter"""
       while 1:
-         self.menu.update(self.game.screen, self.background) # Does not seem to be working
+         self.updateAndFlip()
          for event in pygame.event.get():
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                return oldKey
-            if event.type == KEYDOWN:
+            if event.type == KEYDOWN and event.key not in(K_CAPSLOCK, K_ESCAPE):
                return event.key
 
    def setName(self):
       """Get a string from keyboard and change name, esc resets the old string"""
+      self.menu.setColor(0, (255,50,50))
       oldString = self.playerOptions["name"]
       string = ""
       while True:
+         
          self.menu.setLine(0,"Name: %s" % string)
-         self.menu.update(self.game.screen, self.background) # Doesnt seem to be working
+         self.updateAndFlip()
          for event in pygame.event.get():
             if event.type == KEYDOWN and event.key == K_ESCAPE:
                self.menu.setLine(0,"Name: %s" % oldString)
                self.playerOptions["name"] = oldString
+               self.menu.setColor(0, (255,215,0))
                return
             if event.type == KEYDOWN and event.key == K_RETURN and string != "":
                self.playerOptions["name"] = string
+               self.menu.setColor(0, (255,215,0))
                return
             elif event.type == KEYDOWN:
                if event.key == K_BACKSPACE:
@@ -335,7 +351,12 @@ class PlayerOptionsMenu(Scene):
                   string += pygame.key.name(event.key)
                if event.key == K_SPACE:
                   string += " "         
-
+   
+   def updateAndFlip(self):
+      self.menu.headerSlide()
+      self.menu.update(self.game.screen, self.background)
+      pygame.display.flip() # forgot to flip
+   
 def main():
    pyduel = Game(RESOLUTION, CAPTION, ICON)
    firstScene = MainMenu(pyduel, ("New Game", "Options", "Quit"))

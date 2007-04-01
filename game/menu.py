@@ -61,9 +61,13 @@ class Menu(object):
    def loadLevel(self, levelNumber):
       self.levelNumber = levelNumber
       self.level = self.levelLoader.load(LevelLoader.levels[levelNumber], self.theme) # use level list from level loader's class
+   
    def setLine(self, linenumber, string):
       self.textlinesActive[linenumber].setString(string)
       self.textlinesInactive[linenumber].setString(string)
+      
+   def setColor(self, linenumber, color):
+      self.textlinesActive[linenumber].setColor(color)
 
    class text (object):
       """used to get text objects"""
