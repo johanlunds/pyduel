@@ -68,7 +68,8 @@ class Tile(pygame.sprite.Sprite):
             ("Cloud", {"image": "tile-ground-cloud-left.png"}),
             ("Cloud", {"image": "tile-ground-cloud-right.png"}),
             ("Ladder", {"image": "tile-ladder.png"}),
-            ("HealthItem", {"image": "tile-item.png"})]
+            ("HealthItem", {"image": "tile-item-health.png"}),
+            ("AmmoItem", {"image": "tile-item-ammo.png"})]
    
    def __init__(self, level, cords, image, *args):
       pygame.sprite.Sprite.__init__(self)
@@ -165,3 +166,14 @@ class HealthItemTile(ItemTile):
    def walkedOn(self, player):
       self.removeFromLevel()
       player.health = min(HealthItemTile.HEALTH + player.health, MAX_HEALTH) # MAX if new health > MAX
+      
+class AmmoItemTile(ItemTile):
+
+   AMMO = 15
+
+   def __init__(self, level, cords, image):
+      ItemTile.__init__(self, level, cords, image)
+   
+   def walkedOn(self, player):
+      self.removeFromLevel()
+      player.weapon.ammo = min(AmmoItemTile.AMMO + player.weapon.ammo, player.weapon.maxAmmo) # MAX if new ammo > MAX

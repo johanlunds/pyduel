@@ -18,6 +18,7 @@ Från http://lexin.nada.kth.se/cgi-bin/sve-eng:
          <cell col="20" row="11" />
          <cell col="23" row="17" />
          <cell col="2" row="21" />
+         <cell col="3" row="21" type="13" />
       </data>
    </layer>
    

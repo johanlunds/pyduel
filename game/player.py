@@ -41,6 +41,7 @@ class Player(pygame.sprite.Sprite):
       
       self.health = MAX_HEALTH
       self.weapon = Weapon(self.scene, self)
+      self.scene.weapons.add(self.weapon)
       
    def update(self, keyInput):
       self.handleKeyInput(keyInput)
@@ -48,6 +49,7 @@ class Player(pygame.sprite.Sprite):
       self.jump()
       self.checkForItems()
       self.animation.update()
+      self.weapon.update()
 
    def move(self, xMove, yMove):
       """Move players rect and get corner tiles at new position."""
@@ -115,12 +117,11 @@ class Player(pygame.sprite.Sprite):
             self.state = Player.JUMPING # Else we're in the air
             
       if keyInput[self.keys["shoot"]] and self.weapon.canShoot():
-         if self.animation.imageIn(self.image, "walkLeft"):
-            # we're facing left
-            self.weapon.shoot(LEFT)
-         elif self.animation.imageIn(self.image, "walkRight"):
-            # we're facing right
-            self.weapon.shoot(RIGHT)
+         self.weapon.shoot()
+   
+   def getFacingDir(self):
+      if self.animation.imageIn(self.image, "walkLeft"): return LEFT
+      else: return RIGHT # have to return something
    
    def checkOuterBounds(self):
       # Player cant go outside the screens sides, but can jump over top

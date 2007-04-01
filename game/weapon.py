@@ -8,28 +8,54 @@ from tile import SurroundingTiles
 import pygame
 from pygame.locals import *
       
-class Weapon(object):
+class Weapon(pygame.sprite.Sprite):
 
    SHOOTSPEED = 40 # higher value = longer pauses between shooting
+   PIPEPOS = 2 # Where the bullets should come out from
+   MAX_AMMO = 30
    
    def __init__(self, scene, obj):
+      pygame.sprite.Sprite.__init__(self)
+   
       self.scene = scene
       self.obj = obj
+      image = pygame.Surface((8, 4))
+      image.fill((0, 0, 255)) # blue
+      self.image, self.rect = (image, image.get_rect())
+      self.setPos()
       self.bullets = pygame.sprite.Group()
       self.lastShot = pygame.time.get_ticks()
       self.bulletClass = Bullet # Class to use for bullets
+      self.ammo = Weapon.MAX_AMMO
+      self.maxAmmo = Weapon.MAX_AMMO
       
    def canShoot(self):
-      """You can shoot if long enough time has gone."""
-      return (pygame.time.get_ticks() > Weapon.SHOOTSPEED+self.lastShot)
+      """You can shoot if long enough time has gone, and you have ammo."""
+      if pygame.time.get_ticks() > Weapon.SHOOTSPEED+self.lastShot: # enough time
+         if self.ammo > 0: return True
+      return False
    
-   def shoot(self, dir):
+   def shoot(self):
+      self.setPos() # call to be sure bullets come out from right place
       self.lastShot = pygame.time.get_ticks()
-      if dir == LEFT: x = self.obj.rect.left
-      elif dir == RIGHT: x = self.obj.rect.right
-      pos = (x, self.obj.rect.centery) # todo: maybe change start pos depending on weapon's pos
-      bullet = self.bulletClass(self.scene, pos, dir)
+      if self.dir == LEFT: x = self.rect.left
+      elif self.dir == RIGHT: x = self.rect.right
+      pos = (x, self.pipePos)
+      bullet = self.bulletClass(self.scene, pos, self.dir)
       self.bullets.add(bullet) # keep track of this weapon's fired bullets
+      self.ammo -= 1
+   
+   def setPos(self):
+      self.dir = self.obj.getFacingDir()
+      if self.dir == RIGHT:
+         self.rect.left = self.obj.rect.centerx
+      elif self.dir == LEFT:
+         self.rect.right = self.obj.rect.centerx
+      self.rect.centery = self.obj.rect.centery
+      self.pipePos = Weapon.PIPEPOS + self.rect.top
+   
+   def update(self):
+      self.setPos()
       
 class Bullet(pygame.sprite.Sprite):
    

@@ -25,6 +25,7 @@ class Duel(Scene):
 
       self.background = loadImgPng(os.path.join(self.level.theme, "bg.png"))
       
+      self.weapons = pygame.sprite.Group()
       self.players = pygame.sprite.Group()
       for i, playerOpts in zip(range(2), (self.game.options.playerOne, self.game.options.playerTwo)):
          # Could randomize start pos with list.pop() and random.random() and len(list)
@@ -52,6 +53,7 @@ class Duel(Scene):
    def update(self):
       self.level.tiles.remove(self.level.noneTiles) # why? see Level.draw()
       
+      self.weapons.clear(self.game.screen, self.background)
       self.players.clear(self.game.screen, self.background)
       self.level.bullets.clear(self.game.screen, self.background)
       self.level.tiles.clear(self.game.screen, self.background)
@@ -62,6 +64,7 @@ class Duel(Scene):
       self.level.ladderTiles.draw(self.game.screen)
       self.level.itemTiles.draw(self.game.screen)
       self.players.draw(self.game.screen)
+      self.weapons.draw(self.game.screen)
       self.level.bullets.draw(self.game.screen)
       
       self.level.tiles.add(self.level.noneTiles)
