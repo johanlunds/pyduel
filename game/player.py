@@ -3,7 +3,7 @@
 
 from variables import *
 
-from tile import Tile
+from tile import Tile, SurroundingTiles
 from animation import Animation
 from weapon import Weapon
 

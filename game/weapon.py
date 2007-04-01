@@ -3,6 +3,8 @@
 
 from variables import *
 
+from tile import SurroundingTiles
+
 import pygame
 from pygame.locals import *
       
