@@ -6,6 +6,41 @@ from variables import *
 import pygame
 from pygame.locals import *
 
+class SurroundingTiles(object):
+   """Help class. Holds variables for surrounding (and center) tiles."""
+   
+   def __init__(self, rect, scene):
+      self.forRect = rect
+      self.getFunc = scene.level.get # Function used to fetch tiles
+      self.setCenter()
+      self.setSides()
+      self.setCorners()
+      
+   def setCenter(self):
+      rect = self.forRect
+      self.center = self.getFunc((rect.centerx, rect.centery))
+      
+   def setSides(self):
+      rect = self.forRect
+      self.left = self.getFunc((rect.left, rect.centery))
+      self.right = self.getFunc((rect.right, rect.centery))
+      self.top = self.getFunc((rect.centerx, rect.top))
+      self.bottom = self.getFunc((rect.centerx, rect.bottom))
+      
+   def getSides(self):
+      return (self.top, self.right, self.bottom, self.left) # Return in clockwise order
+   
+   def setCorners(self):
+      rect = self.forRect
+      self.topLeft = self.getFunc((rect.left, rect.top))
+      self.topRight = self.getFunc((rect.right, rect.top))
+      self.bottomLeft = self.getFunc((rect.left, rect.bottom))
+      self.bottomRight = self.getFunc((rect.right, rect.bottom))
+   
+   def getCorners(self):
+      # Return in clockwise order, starting with topleft (maybe should be topright)
+      return (self.topLeft, self.topRight, self.bottomRight, self.bottomLeft)
+
 class Tile(pygame.sprite.Sprite):
    """Generic tile class. Don't use this directly, inherit from this one.
    
