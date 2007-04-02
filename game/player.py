@@ -11,7 +11,7 @@ import pygame
 from pygame.locals import *
 
 class Player(pygame.sprite.Sprite):
-
+   
    JUMPSPEED = 14 # Speed at start of jump
    SPEED = 4 # Walking speed
    STANDING, JUMPING, CLIMBING = range(3) # States of player
@@ -21,9 +21,12 @@ class Player(pygame.sprite.Sprite):
    A_FRAMES = 4 # Number of frames
    A_RIGHT = 0 # The frame for facing left
    A_LEFT = 4 # and right
-
-   def __init__(self, scene, name, image, keys, position):
+   
+   
+   
+   def __init__(self, scene, sound, name, image, keys, position):
       pygame.sprite.Sprite.__init__(self)
+      self.sound = sound
       
       self.scene = scene
       self.name = name
@@ -79,6 +82,7 @@ class Player(pygame.sprite.Sprite):
          
          self.state = Player.JUMPING
          self.ySpeed = Player.JUMPSPEED
+         self.sound.play("jump")
       
       if keyInput[self.keys["left"]]:
          self.animation.defaultFrame = Player.A_LEFT # A bit of a hack to make us face the right direction when climbing etc
@@ -118,6 +122,7 @@ class Player(pygame.sprite.Sprite):
             
       if keyInput[self.keys["shoot"]] and self.weapon.canShoot():
          self.weapon.shoot()
+         self.sound.play("shoot")
    
    def getFacingDir(self):
       if self.animation.imageIn(self.image, "walkLeft"): return LEFT
@@ -139,6 +144,7 @@ class Player(pygame.sprite.Sprite):
       items = [tile.item for tile in self.tiles.getCorners() if tile.item]
       for item in items:
          item.walkedOn(self)
+         self.sound.play("powerup")
    
    def jump(self):
       if self.state != Player.JUMPING: return

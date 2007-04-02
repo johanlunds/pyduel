@@ -4,6 +4,7 @@
 from variables import *
 
 from menu import OptionsHandler
+from sound import Music, Sound
 
 import pygame
 from pygame.locals import *
@@ -14,6 +15,7 @@ class Game(object):
    FRAMERATE = 30
    
    def __init__(self, resolution, caption=None, icon=None):
+      pygame.mixer.pre_init(44100,-16,2, 1024 * 3)
       pygame.init()
       if not (pygame.mixer or pygame.font): raise SystemExit, "Missing required Pygame mixer and/or font modules."
       
@@ -32,7 +34,10 @@ class Game(object):
          pygame.display.set_icon(icon)
 
       self.clock = pygame.time.Clock()
-
+      
+      self.music = Music()
+      if not self.options.system["music"]: self.music.pause()
+      
    def tick(self):
       """Limits framerate. Call in game loop."""
       self.clock.tick(Game.FRAMERATE)
@@ -91,6 +96,8 @@ class Scene(object):
          for event in pygame.event.get():
             if event.type == QUIT:
                raise SystemExit, 0
+            if event.type == KEYDOWN and event.key == K_F9: self.game.music.pause()
+            if event.type == KEYDOWN and event.key == K_F10: self.game.toggleFullscreen()
             try:
                self.event(event)
             except SceneExit:

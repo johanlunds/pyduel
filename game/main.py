@@ -14,14 +14,14 @@ from level import LevelLoader
 from player import Player
 from menu import Menu, Options, OptionsHandler
 from hud import HUD
-
+from sound import Sound
 
 class Duel(Scene):
    """The main game scene. Where the players fight against eachother."""
    
    def __init__(self, game):
       Scene.__init__(self, game)
-      
+      self.sound = Sound()
       self.levelLoader = LevelLoader(self)
       self.loadLevel(1) # First level
       
@@ -32,7 +32,7 @@ class Duel(Scene):
          # Could randomize start pos with list.pop() and random.random() and len(list)
          startPos = self.level.getPixelsFromCords(self.level.startPos[i])
          keys = dict([(key, playerOpts[key]) for key in ("left", "right", "up", "down", "jump", "shoot")])
-         self.players.add(Player(self, playerOpts["name"], loadImgPng(playerOpts["image"]), keys, startPos))
+         self.players.add(Player(self, self.sound, playerOpts["name"], loadImgPng(playerOpts["image"]), keys, startPos))
          
       self.hud = HUD(self.game.options.playerOne["name"], self.game.options.playerTwo["name"], 30)
       
@@ -41,6 +41,7 @@ class Duel(Scene):
       self.level = self.levelLoader.load(LevelLoader.levels[levelNumber], self.game.options.game["theme"]) # use level list from level loader's class
    
    def playerKilled(self, deadPlayer):
+      self.sound.play("die")
       for player in self.players:
          if deadPlayer != player:
             self.runScene(GameOverMenu(self.game, player.name))
@@ -186,6 +187,7 @@ class OptionsMenu(Scene):
                self.options.system["sound"] = True
                self.menu.setLine(1, "Sound: %s" % "Yes")
          if self.menu.selection == 2: #music
+            self.game.music.pause()
             if self.options.system["music"]: 
                self.options.system["music"] = False
                self.menu.setLine(2, "Music: %s" % "No")
