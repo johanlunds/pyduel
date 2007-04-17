@@ -32,6 +32,8 @@ class Game(object):
       if icon:
          icon = pygame.image.load(icon).set_colorkey((255, 0, 255)) # pink
          pygame.display.set_icon(icon)
+         
+      pygame.mouse.set_visible(False)
 
       self.clock = pygame.time.Clock()
       

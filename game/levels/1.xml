@@ -19,6 +19,10 @@ Från http://lexin.nada.kth.se/cgi-bin/sve-eng:
          <cell col="23" row="17" />
          <cell col="2" row="21" />
          <cell col="3" row="21" type="13" />
+         <cell col="24" row="3" type="13" />
+         <cell col="17" row="14" type="13" />
+         <cell col="0" row="13" type="13" />
+         <cell col="7" row="17" type="13" />
       </data>
    </layer>
    

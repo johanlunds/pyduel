@@ -19,8 +19,8 @@
       <option name="right" type="int">100</option>
       <option name="up" type="int">119</option>
       <option name="down" type="int">115</option>
-      <option name="jump" type="int">9</option>
-      <option name="shoot" type="int">301</option>
+      <option name="jump" type="int">304</option>
+      <option name="shoot" type="int">306</option>
    </playerOne>
    <playerTwo>
       <option name="name">ola</option>
@@ -29,8 +29,8 @@
       <option name="right" type="int">275</option>
       <option name="up" type="int">273</option>
       <option name="down" type="int">274</option>
-      <option name="jump" type="int">13</option>
-      <option name="shoot" type="int">303</option>
+      <option name="jump" type="int">303</option>
+      <option name="shoot" type="int">305</option>
    </playerTwo>
 </options>
 

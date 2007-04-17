@@ -164,16 +164,18 @@ class HealthItemTile(ItemTile):
       ItemTile.__init__(self, level, cords, image)
    
    def walkedOn(self, player):
+      if player.health >= MAX_HEALTH: return # only pick up, if health is not full
       self.removeFromLevel()
       player.health = min(HealthItemTile.HEALTH + player.health, MAX_HEALTH) # MAX if new health > MAX
       
 class AmmoItemTile(ItemTile):
 
-   AMMO = 15
+   AMMO = 20
 
    def __init__(self, level, cords, image):
       ItemTile.__init__(self, level, cords, image)
    
    def walkedOn(self, player):
+      if player.weapon.ammo >= player.weapon.MAX_AMMO: return # only pick up, if ammo is not full
       self.removeFromLevel()
       player.weapon.ammo = min(AmmoItemTile.AMMO + player.weapon.ammo, player.weapon.maxAmmo) # MAX if new ammo > MAX
