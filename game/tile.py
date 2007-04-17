@@ -148,6 +148,7 @@ class ItemTile(Tile):
    def walkedOn(self, player):
       """Called when player walks on item"""
       self.removeFromLevel() # By default just remove
+      return True
       
    def removeFromLevel(self):
       # so classes that inherits don't have to define
@@ -164,9 +165,10 @@ class HealthItemTile(ItemTile):
       ItemTile.__init__(self, level, cords, image)
    
    def walkedOn(self, player):
-      if player.health >= MAX_HEALTH: return # only pick up, if health is not full
+      if player.health >= MAX_HEALTH: return False # only pick up, if health is not full
       self.removeFromLevel()
       player.health = min(HealthItemTile.HEALTH + player.health, MAX_HEALTH) # MAX if new health > MAX
+      return True
       
 class AmmoItemTile(ItemTile):
 
@@ -176,6 +178,7 @@ class AmmoItemTile(ItemTile):
       ItemTile.__init__(self, level, cords, image)
    
    def walkedOn(self, player):
-      if player.weapon.ammo >= player.weapon.MAX_AMMO: return # only pick up, if ammo is not full
+      if player.weapon.ammo >= player.weapon.MAX_AMMO: return False # only pick up, if ammo is not full
       self.removeFromLevel()
       player.weapon.ammo = min(AmmoItemTile.AMMO + player.weapon.ammo, player.weapon.maxAmmo) # MAX if new ammo > MAX
+      return True

@@ -11,7 +11,7 @@ class Music(object):
       self.isPaused = False
       self.files = []
       for entry in os.listdir(DIR_MUSIC):
-         if os.path.isfile(os.path.join(DIR_MUSIC, entry)) and (entry.find(".mp3") != -1 or entry.find(".ogg") != -1):
+         if os.path.isfile(os.path.join(DIR_MUSIC, entry)) and entry.find(".ogg") != -1:
             self.files.append(os.path.join(DIR_MUSIC, entry))
       self.files.sort()
       pygame.mixer.music.load(self.files[0])

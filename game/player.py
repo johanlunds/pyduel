@@ -130,11 +130,11 @@ class Player(pygame.sprite.Sprite):
    
    def checkOuterBounds(self):
       # Player cant go outside the screens sides, but can jump over top
-      if self.rect.right < 0:
-         self.rect.left = RES_WIDTH-1 
-      if self.rect.left > RES_WIDTH:
+      if self.rect.right <= 0:
+         self.rect.left = RES_WIDTH-1
+      if self.rect.left >= RES_WIDTH:
          self.rect.right = 1
-      if self.rect.top > RES_HEIGHT:
+      if self.rect.top >= RES_HEIGHT:
          self.rect.bottom = 0 # Falled through screen so move to top of screen
    
    def checkForItems(self):
@@ -143,8 +143,7 @@ class Player(pygame.sprite.Sprite):
       self.setTiles(self.rect) # Ensure surrounding tiles are up to date (but don't set self.oldTiles)
       items = [tile.item for tile in self.tiles.getCorners() if tile.item]
       for item in items:
-         item.walkedOn(self)
-         self.sound.play("powerup")
+         if item.walkedOn(self): self.sound.play("powerup")
    
    def jump(self):
       if self.state != Player.JUMPING: return

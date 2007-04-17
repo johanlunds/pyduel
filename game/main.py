@@ -72,8 +72,8 @@ class Duel(Scene):
       
       self.level.tiles.draw(self.game.screen)
       self.level.ladderTiles.draw(self.game.screen)
-      self.level.itemTiles.draw(self.game.screen)
       self.players.draw(self.game.screen)
+      self.level.itemTiles.draw(self.game.screen)
       self.weapons.draw(self.game.screen)
       self.level.bullets.draw(self.game.screen)
    

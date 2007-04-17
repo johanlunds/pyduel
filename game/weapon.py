@@ -11,7 +11,7 @@ from pygame.locals import *
 class Weapon(pygame.sprite.Sprite):
 
    SHOOTSPEED = 200 # higher value = longer pauses between shooting
-   PIPEPOS = 2 # Where the bullets should come out from
+   PIPEPOS = 0 # Where the bullets should come out from
    MAX_AMMO = 30
    
    def __init__(self, scene, obj):
@@ -69,7 +69,7 @@ class Bullet(pygame.sprite.Sprite):
       self.dir = dir
       
       image = pygame.Surface((2, 1))
-      image.fill((255, 0, 0)) # red
+      image.fill((255, 255, 255)) # red
       self.image, self.rect = image, image.get_rect()
       x, y = pos
       if dir == LEFT: x -= self.rect.width # add width to x pos if we're moving left
