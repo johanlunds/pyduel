@@ -6,9 +6,9 @@ PyDuel is a two-player duel shooting game. It is the result of work done by Joha
 
 The objective of the game is simple: kill the other player before he kills you. The controls used are configurable through the in-game menu. They are by default:
 
-| | **move** | **jump** | **shoot** |
-|:|:---------|:---------|:----------|
-| **player 1** | WASD | left SHIFT | left CTRL |
+|              | **move**   | **jump**    | **shoot**  |
+|--------------|------------|-------------|------------|
+| **player 1** | WASD       | left SHIFT  | left CTRL  |
 | **player 2** | arrow keys | right SHIFT | right CTRL |
 
 # Download and Install #
