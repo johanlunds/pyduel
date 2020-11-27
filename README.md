@@ -2,6 +2,8 @@
 
 **_For the time being this project is discontinued._**
 
+![](https://github.com/johanlunds/pyduel/raw/master/Image%202020-11-27%20at%202.24.16%20PM.png)
+
 PyDuel is a two-player duel shooting game. It is the result of work done by Johan Lundström and Lucas Correia in the subject "Projektarbete" at Fyrisskolan, Uppsala in Sweden. It features music by Emil Fredén. A simple presentation/website can be found at http://hem.bredband.net/lucascorreia/pyduel/. PyDuel is written in Python and [Pygame](http://pygame.org) (a Python wrapper for SDL).
 
 The objective of the game is simple: kill the other player before he kills you. The controls used are configurable through the in-game menu. They are by default:
